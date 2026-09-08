@@ -5,6 +5,7 @@ import * as React from 'react';
 
 export interface FlipCardData {
   name: string;
+  hint:string;
   
 }
 
@@ -72,7 +73,7 @@ export function FlipCard({ data }: FlipCardProps) {
         >
           <div className="flex flex-col items-center justify-center w-full h-full text-center">
   <p className="text-foreground text-sm">
-    This is a sample flip card component. You can customize the content on the front and back sides as needed.
+    {data.hint}
   </p>
 </div>
         </motion.div>
