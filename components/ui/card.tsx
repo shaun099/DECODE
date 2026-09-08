@@ -8,9 +8,9 @@ export function Card({ title, description, icon }: CardProps) {
   return (
     <div
       className="
-        w-[260px] h-[180px]
+        w-xs h-48
         flex flex-col justify-between
-        rounded-xl border border-gray-200
+        rounded-lg border border-gray-200
         bg-white p-5
         shadow-sm
         hover:border-red-300 transition-colors

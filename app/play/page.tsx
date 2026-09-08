@@ -1,15 +1,20 @@
 import Image from "next/image";
 import {Card }from "@/components/ui/card";
-
+import DottedGridBackground from "@/components/ui/DottedGridBackground";
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
+    <div className="w-full min-h-screen flex flex-col items-center justify-center ">
+     
       
-      <div className="grid grid-cols-4 gap-6">
-  {Array.from({ length: 16 }).map((_, i) => (
-    <Card key={i} title={`Card ${i + 1}`} description="Some content here" />
+      <div>
+        <div className="grid grid-cols-4 gap-6">
+           {Array.from({ length: 16 }).map((_, i) => (
+               <Card key={i} title={`Card ${i + 1}`} description="Some content here" />
   ))}
-</div>
+      </div>
+      </div>
+      
     </div>
+    
   );
 }

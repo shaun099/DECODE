@@ -5,11 +5,11 @@ export default function DottedGridBackground({
 }) {
   return (
     <div
-      className="min-h-full w-full"
+      className="min-h-screen w-full"
       style={{
         backgroundColor: "#000000",
         backgroundImage:
-          "radial-gradient(circle, #00ff41 1px, transparent 1px)",
+          "radial-gradient(circle, #0d401f 1px, transparent 1px)",
         backgroundSize: "24px 24px",
       }}
     >
