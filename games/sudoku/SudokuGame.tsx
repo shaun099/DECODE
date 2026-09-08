@@ -198,13 +198,7 @@ export default function SudokuGame({ onWin }: SudokuGameProps) {
         </button>
       </div>
 
-      <button
-        type="button"
-        className="rounded-lg bg-cyan-600 px-6 py-2.5 text-sm font-semibold text-zinc-950 transition-colors hover:bg-cyan-500"
-        onClick={newGame}
-      >
-        New Game
-      </button>
+      
 
       {/* Victory overlay */}
       {won && (
@@ -222,7 +216,7 @@ export default function SudokuGame({ onWin }: SudokuGameProps) {
               className="mt-2 rounded-lg bg-cyan-600 px-6 py-2.5 text-sm font-semibold text-zinc-950 transition-colors hover:bg-cyan-500"
               onClick={() => router.push("/play")}
             >
-              Play Again
+              Go Back To Tasks
             </button>
           </div>
         </div>

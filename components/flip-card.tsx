@@ -6,6 +6,7 @@ import * as React from 'react';
 export interface FlipCardData {
   name: string;
   hint:string;
+  game: string;
   
 }
 
