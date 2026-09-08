@@ -5,16 +5,14 @@ import * as React from 'react';
 
 export interface FlipCardData {
   name: string;
-  hint:string;
-  
+  hint: string;
 }
 
 interface FlipCardProps {
   data: FlipCardData;
-  onPlay?: () => void;
 }
 
-export function FlipCard({ data, onPlay }: FlipCardProps) {
+export function FlipCard({ data }: FlipCardProps) {
   const [isFlipped, setIsFlipped] = React.useState(false);
 
   const isTouchDevice =
@@ -72,21 +70,9 @@ export function FlipCard({ data, onPlay }: FlipCardProps) {
           variants={cardVariants}
           style={{ transformStyle: 'preserve-3d', rotateY: 180 }}
         >
-          <div className="flex flex-col items-center justify-center w-full h-full text-center">
-  <p className="text-foreground text-md font-bold">
-    {data.hint}
-  </p>
-</div>
-          <button
-            type="button"
-            onClick={(event) => {
-              event.stopPropagation();
-              onPlay?.();
-            }}
-            className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
-          >
-            PLAY GAME
-          </button>
+          <div className="flex h-full w-full flex-col items-center justify-center text-center">
+            <p className="text-sm text-foreground">{data.hint}</p>
+          </div>
         </motion.div>
       </div>
     </div>

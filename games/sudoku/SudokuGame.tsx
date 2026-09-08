@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   BOARD_LENGTH,
   GRID_SIZE,
@@ -23,6 +24,7 @@ const CONFLICT_CLASS = "text-red-400";
 const SELECTED_CLASS = "bg-cyan-500/25";
 
 export default function SudokuGame({ onWin }: SudokuGameProps) {
+  const router = useRouter();
   // Puzzles use Math.random(), which would break SSR hydration, so the first
   // board is generated client-side after mount. The server renders an empty grid.
   const [puzzle, setPuzzle] = useState<Board>(() => new Array(BOARD_LENGTH).fill(0) as Board);
@@ -218,7 +220,7 @@ export default function SudokuGame({ onWin }: SudokuGameProps) {
             <button
               type="button"
               className="mt-2 rounded-lg bg-cyan-600 px-6 py-2.5 text-sm font-semibold text-zinc-950 transition-colors hover:bg-cyan-500"
-              onClick={newGame}
+              onClick={() => router.push("/play")}
             >
               Play Again
             </button>
