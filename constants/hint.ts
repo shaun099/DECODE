@@ -6,7 +6,7 @@ export interface Hint {
 
 export const hints: Hint[] = [
   { name: 'DECODE', hint: 'The Dance Of Numbers', game: 'sudoku' },
-  { name: 'DECODE', hint: 'hint2', game: 'game2' },
+  { name: 'DECODE', hint: 'The Letter of Lie', game: 'phishing' },
   { name: 'DECODE', hint: 'hint3', game: 'game3' },
   { name: 'DECODE', hint: 'hint4', game: 'game4' },
   { name: 'DECODE', hint: 'hint5', game: 'game5' },
