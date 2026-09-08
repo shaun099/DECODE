@@ -76,6 +76,7 @@ export function FlipCard({ data }: FlipCardProps) {
     {data.hint}
   </p>
 </div>
+<button className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'>PLAY GAME</button>
         </motion.div>
       </div>
     </div>
