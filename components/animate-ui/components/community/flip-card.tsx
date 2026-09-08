@@ -36,7 +36,7 @@ export function FlipCard({ data }: FlipCardProps) {
   };
 
   return (
-    <div className="relative mt-2 mx-auto w-40 h-60 md:w-80 md:h-45 ">
+    <div className="relative mt-2 mx-auto w-40 h-60 md:w-60 md:h-60 ">
       {/* Background glow */}
       <motion.div
         className="absolute -inset-6 -z-10 rounded-full blur-3xl"
