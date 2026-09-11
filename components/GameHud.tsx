@@ -1,57 +1,70 @@
 'use client';
 
 export default function GameHud({
-  name, index, total, wrong, maxWrong,
+  name, index, total, left, max,
 }: {
   name: string;
   index?: number;
   total?: number;
-  wrong: number;
-  maxWrong: number;
+  left: number;        // comes from the server, never counted locally
+  max: number;
 }) {
-  const left = Math.max(0, maxWrong - wrong);
-  const critical = left <= 1;
+  const unlimited = max >= 50;
+  const critical = !unlimited && left <= 1;
+  const low = !unlimited && left <= 2;
+  const has = typeof index === 'number' && !!total;
 
   return (
-    <div className="shrink-0 space-y-2">
-      <div className="flex items-center justify-between font-mono">
-        <span className="text-base text-zinc-200">
-          {name}
-          {typeof index === 'number' && total ? (
-            <span className="ml-3 text-sm text-zinc-500">
-              {String(index + 1).padStart(2, '0')} / {String(total).padStart(2, '0')}
-            </span>
-          ) : null}
-        </span>
+    <div className="shrink-0 border-b-2 border-emerald-900/50 pb-4">
+      <div className="flex items-end justify-between gap-8">
+        <div className="min-w-0">
+          <p className="font-mono text-[11px] tracking-[0.28em] text-emerald-600">ACTIVE TASK</p>
+          <h1 className="mt-1.5 truncate text-3xl font-black tracking-tight text-emerald-300">
+            {name}
+          </h1>
+        </div>
 
-        <span className="flex items-center gap-4">
-          <span className="text-[10px] tracking-[0.2em] text-zinc-600">ATTEMPTS LEFT</span>
-          <span className="flex gap-1.5">
-            {Array.from({ length: maxWrong }).map((_, i) => (
-              <span key={i}
-                className={
-                  'h-2.5 w-2.5 rounded-full ' +
-                  (i < left
-                    ? critical
-                      ? 'bg-red-400 shadow-[0_0_6px_rgba(248,113,113,0.9)]'
-                      : 'bg-green-400 shadow-[0_0_6px_rgba(74,222,128,0.9)]'
-                    : 'bg-zinc-800')
-                }
-              />
-            ))}
+        <div className="shrink-0 text-right">
+          <p className="font-mono text-[11px] tracking-[0.2em] text-zinc-500">
+            {unlimited ? 'ATTEMPTS' : 'ATTEMPTS LEFT'}
+          </p>
+          {unlimited ? (
+            <p className="mt-1 text-base text-zinc-400">Unlimited</p>
+          ) : (
+            <p className="mt-1 leading-none">
+              <span className={
+                'font-mono text-4xl font-bold ' +
+                (critical ? 'text-red-400' : low ? 'text-amber-400' : 'text-emerald-300')
+              } style={{ fontVariantNumeric: 'tabular-nums' }}>
+                {left}
+              </span>
+              <span className="ml-1.5 font-mono text-base text-zinc-500">/{max}</span>
+            </p>
+          )}
+        </div>
+      </div>
+
+      {has && (
+        <div className="mt-4 flex items-center gap-4">
+          <span className="shrink-0 font-mono text-[11px] tracking-[0.18em] text-zinc-500">
+            STEP {index! + 1} / {total}
           </span>
-        </span>
-      </div>
+          <div className="h-[3px] flex-1 bg-emerald-950">
+            <div className="h-[3px] bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,.8)]
+                            transition-all duration-500"
+              style={{ width: `${(index! / total!) * 100}%` }} />
+          </div>
+        </div>
+      )}
 
-      <div className="flex items-center justify-between rounded-lg border border-zinc-800 bg-zinc-950/60 px-4 py-2">
-        <span className="font-mono text-[10px] tracking-[0.2em] text-zinc-600">
-          TASK LOCKED · NO EXIT UNTIL COMPLETE
-        </span>
-        <span className={'font-mono text-[10px] tracking-[0.2em] ' +
-          (critical ? 'text-red-400' : 'text-zinc-600')}>
-          {left} {left === 1 ? 'ATTEMPT' : 'ATTEMPTS'} BEFORE A 1 MINUTE LOCK
-        </span>
-      </div>
+      {low && (
+        <p className={
+          'mt-3 font-mono text-[13px] tracking-[0.16em] ' +
+          (critical ? 'text-red-400' : 'text-amber-400')
+        }>
+          ▲ {critical ? 'One more mistake locks you out' : 'Lockout is close'}
+        </p>
+      )}
     </div>
   );
 }

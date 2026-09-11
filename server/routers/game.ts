@@ -111,10 +111,10 @@ export const gameRouter = router({
       await log(ctx.teamId, 'start', card.id);
 
       return {
-        ui: card.ui,
         name: card.name,
         maxWrong: card.maxWrong,
         wrong: existing?.attempts ?? 0,
+        attemptsLeft: Math.max(0, card.maxWrong - (existing?.attempts ?? 0)),
         view: card.view(state),
       };
     }),
@@ -140,7 +140,7 @@ export const gameRouter = router({
       const attempts = row.attempts + (res.correct ? 0 : 1);
 
       /* attempts exhausted -> lock, and reset the card */
-      if (!res.correct && attempts >= card.maxWrong) {
+      if ((!res.correct && attempts >= card.maxWrong) || (res as any).exhausted) {
         const until = new Date(Date.now() + LOCK_MS).toISOString();
         await db.from('progress')
           .update({ state: card.init(), attempts: 0 })
@@ -148,7 +148,18 @@ export const gameRouter = router({
         await db.from('teams')
           .update({ locked_until: until, active_card: null }).eq('id', ctx.teamId);
         await log(ctx.teamId, 'lock', card.id, 'attempts exhausted');
-        return { correct: false, done: false, locked: true, key: null, nextClue: null, view: null };
+        return {
+          correct: false,
+          done: false,
+          locked: true,
+          lockMs: LOCK_MS,
+          attemptsLeft: 0,
+          lastAnswer: (res as any).lastAnswer ?? null,
+          lastPick: (res as any).lastPick ?? null,
+          key: null as null | { value: string; position: number },
+          nextClue: null as string | null,
+          view: null,
+        };
       }
 
       /* still going */
@@ -159,6 +170,10 @@ export const gameRouter = router({
           correct: res.correct,
           done: false,
           locked: false,
+          lockMs: 0,
+          attemptsLeft: Math.max(0, card.maxWrong - attempts),
+          lastAnswer: (res as any).lastAnswer ?? null,
+          lastPick: (res as any).lastPick ?? null,
           key: null as null | { value: string; position: number },
           nextClue: null as string | null,
           view: card.view(res.state),
@@ -177,16 +192,36 @@ export const gameRouter = router({
           position: card.key.position,
           value: card.key.value,
           card_id: card.id,
+          won_at: new Date().toISOString(),
         });
         await log(ctx.teamId, 'key', card.id, `position ${card.key.position}`);
         return {
-          correct: true, done: true, locked: false,
-          key: card.key, nextClue: card.nextClue ?? null, view: null,
+          correct: true,
+          done: true,
+          locked: false,
+          lockMs: 0,
+          attemptsLeft: Math.max(0, card.maxWrong - attempts),
+          lastAnswer: (res as any).lastAnswer ?? null,
+          lastPick: (res as any).lastPick ?? null,
+          key: card.key,
+          nextClue: card.nextClue ?? null,
+          view: null,
         };
       }
 
       await log(ctx.teamId, 'decoy', card.id);
-      return { correct: true, done: true, locked: false, key: null, nextClue: null, view: null };
+      return {
+        correct: true,
+        done: true,
+        locked: false,
+        lockMs: 0,
+        attemptsLeft: Math.max(0, card.maxWrong - attempts),
+        lastAnswer: (res as any).lastAnswer ?? null,
+        lastPick: (res as any).lastPick ?? null,
+        key: null as null | { value: string; position: number },
+        nextClue: null as string | null,
+        view: null,
+      };
     }),
 
   final: teamProcedure

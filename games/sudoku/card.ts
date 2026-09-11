@@ -1,13 +1,23 @@
-import type { CardModule } from '../index';
-import { generatePuzzle, isBoardSolved } from '@/games/sudoku/logic';
+import type { CardModule } from '@/server/cards/types';
+import { generatePuzzle, isBoardSolved } from './logic';
+
+/** Accepts either a bare array or { puzzle }, and fails loudly if neither. */
+function makePuzzle(): number[] {
+  const out: any = generatePuzzle(42);
+  const grid: number[] = Array.isArray(out) ? out : out?.puzzle;
+  if (!Array.isArray(grid) || grid.length !== 81) {
+    throw new Error(
+      `generatePuzzle returned ${Array.isArray(grid) ? grid.length : typeof grid}, expected 81 cells`,
+    );
+  }
+  return grid;
+}
 
 const card: CardModule = {
   id: 'sudoku',
   real: true,
   name: 'The Dance of Numbers',
   teaser: 'Nine rows, nine columns, and nothing may appear twice.',
-  ui: 'sudoku',
-
   rules: [
     'One grid. Every row, column and 3×3 box must hold 1 to 9 with no repeats.',
     'The numbers already printed cannot be changed.',
@@ -16,14 +26,10 @@ const card: CardModule = {
     'You cannot leave once you begin.',
   ],
   maxWrong: 99,
-
   key: { value: 'H1', position: 5 },
   nextClue: 'You hold everything now. Assemble it.',
 
-  init: () => {
-    const { puzzle } = generatePuzzle(42);
-    return { puzzle };
-  },
+  init: () => ({ puzzle: makePuzzle() }),
 
   view: (s) => ({ puzzle: s.puzzle }),
 

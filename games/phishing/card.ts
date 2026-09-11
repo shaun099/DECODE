@@ -1,5 +1,5 @@
-import type { CardModule } from '../index';
-import { EMAILS, parse } from '@/games/phishing/logic';
+import type { CardModule } from '@/server/cards/types';
+import { EMAILS, parse } from './logic';
 
 const seg = (line: string) => parse(line);
 
@@ -8,8 +8,6 @@ const card: CardModule = {
   real: true,
   name: 'The Honest Letter',
   teaser: 'Five messages. Every one is lying about something small.',
-  ui: 'spans',
-
   rules: [
     `${EMAILS.length} messages, one at a time.`,
     'Each hides one or two details that give it away.',
@@ -18,7 +16,6 @@ const card: CardModule = {
     'You cannot leave once you begin.',
   ],
   maxWrong: 4,
-
   key: { value: 'V2', position: 3 },
   nextClue: 'Next: nine rows, nine columns, nothing twice.',
 
@@ -54,11 +51,7 @@ const card: CardModule = {
       return { state: { ...s, found }, correct: true, done: false };
     }
     const next = s.i + 1;
-    return {
-      state: { i: next, found: [], wrong: [] },
-      correct: true,
-      done: next >= EMAILS.length,
-    };
+    return { state: { i: next, found: [], wrong: [] }, correct: true, done: next >= EMAILS.length };
   },
 };
 

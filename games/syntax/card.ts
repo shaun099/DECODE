@@ -1,22 +1,19 @@
-import type { CardModule } from '../index';
-import { BUGS } from '@/games/syntax_hunt/logic';
+import type { CardModule } from '@/server/cards/types';
+import { BUGS } from './logic';
 
 const card: CardModule = {
   id: 'syntax',
   real: true,
   name: 'The Compiler',
   teaser: 'Snippets that will not build. One line each is at fault.',
-  ui: 'lines',
-
-  rules: [                                    // 👈 PASTE THESE TWO
+  rules: [
     `${BUGS.length} C snippets. Exactly one line in each will not compile.`,
     'Click the line at fault. Blank lines cannot be clicked.',
     'Four wrong clicks and your terminal locks for one minute.',
     'A lock resets this task to the first snippet.',
     'You cannot leave once you begin.',
   ],
-  maxWrong: 4,                                // 👈 FIELDS HERE
-
+  maxWrong: 4,
   key: { value: 'K7', position: 1 },
   nextClue: 'Next: the one that runs perfectly and answers wrongly.',
 
@@ -26,7 +23,7 @@ const card: CardModule = {
     index: s.i,
     total: BUGS.length,
     title: BUGS[s.i].brief,
-    lines: BUGS[s.i].lines,
+    lines: BUGS[s.i].lines,      // badLine and reason never leave the server
     wrong: s.wrong,
   }),
 

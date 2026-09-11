@@ -1,7 +1,13 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
+import LockClock from '@/components/LockClock';
 import { trpc } from '@/lib/trpc';
+
+/** Children are memoised so a poll never rebuilds the game tree. */
+const Pass = memo(function Pass({ children }: { children: React.ReactNode }) {
+  return <>{children}</>;
+});
 
 export default function Guard({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -9,10 +15,23 @@ export default function Guard({ children }: { children: React.ReactNode }) {
   const wasLocked = useRef(false);
   const [remount, setRemount] = useState(0);
 
-  const q = trpc.game.state.useQuery(undefined, { refetchInterval: 2000, retry: false });
-  const locked = (q.data?.lockedMs ?? 0) > 0;
+  const q = trpc.game.state.useQuery(undefined, {
+    refetchInterval: 4000,
+    retry: false,
+    // narrowed so serverNow and remainingMs never cause a render here
+    select: (d) => ({
+      locked: d.lockedMs > 0,
+      lockedSec: Math.ceil(d.lockedMs / 1000),
+      activeCard: d.activeCard,
+      finished: d.finished,
+      expired: d.expired,
+    }),
+    structuralSharing: true,
+  });
 
-  /* A lock just cleared. The server reset the card, so discard stale UI state. */
+  const locked = q.data?.locked ?? false;
+
+  // a lock just cleared — the server reset the card, so discard stale UI state
   useEffect(() => {
     if (wasLocked.current && !locked) {
       setRemount((n) => n + 1);
@@ -29,24 +48,23 @@ export default function Guard({ children }: { children: React.ReactNode }) {
   /* 1 — time is up */
   if (s.expired && path !== '/result') { router.replace('/result'); return null; }
 
-  /* 2 — lockout */
-  if (s.lockedMs > 0) {
-    const sec = Math.ceil(s.lockedMs / 1000);
+  /* 2 — locked out */
+  if (s.locked) {
     return (
-      <div className="flex h-screen flex-col items-center justify-center gap-6 px-4 text-center">
-        <h2 className="font-mono text-2xl font-bold tracking-widest text-red-400">
-          TERMINAL LOCKED
-        </h2>
-        <p className="max-w-sm font-mono text-sm leading-relaxed text-zinc-400">
-          Your attempts on that task were exhausted. The task has been reset to the beginning.
-          No task can be opened until this clears.
-        </p>
-        <p className="font-mono text-6xl font-bold tabular-nums text-zinc-100">
-          {String(Math.floor(sec / 60)).padStart(2, '0')}:{String(sec % 60).padStart(2, '0')}
-        </p>
-        <p className="font-mono text-[10px] tracking-[0.25em] text-zinc-700">
-          THE THREE HOUR CLOCK KEEPS RUNNING
-        </p>
+      <div className="flex min-h-screen items-center justify-center px-4">
+        <div className="max-w-md border-2 border-red-900 bg-black/60 px-10 py-10 text-center">
+          <p className="text-xl font-black tracking-[0.2em] text-red-400">TERMINAL LOCKED</p>
+          <p className="mt-4 text-sm leading-relaxed text-zinc-400">
+            Attempts exhausted. The task has been reset to its beginning, and no other task
+            can be opened until this clears.
+          </p>
+
+          <LockClock seconds={s.lockedSec} />
+
+          <p className="mt-6 font-mono text-[11px] tracking-[0.2em] text-zinc-600">
+            THE THREE HOUR CLOCK KEEPS RUNNING
+          </p>
+        </div>
       </div>
     );
   }
@@ -56,11 +74,9 @@ export default function Guard({ children }: { children: React.ReactNode }) {
   if (wanted && path !== wanted) {
     router.replace(wanted);
     return (
-      <div className="flex h-screen flex-col items-center justify-center gap-4 px-4 text-center">
-        <h2 className="font-mono text-xl font-bold tracking-widest text-green-300">
-          TASK IN PROGRESS
-        </h2>
-        <p className="max-w-sm font-mono text-sm text-zinc-400">Returning you to it.</p>
+      <div className="flex min-h-screen flex-col items-center justify-center gap-3 px-4 text-center">
+        <p className="text-lg font-bold tracking-[0.2em] text-emerald-300">TASK IN PROGRESS</p>
+        <p className="text-sm text-zinc-500">Returning you to it.</p>
       </div>
     );
   }
@@ -68,5 +84,5 @@ export default function Guard({ children }: { children: React.ReactNode }) {
   /* 4 — already finished */
   if (s.finished && path !== '/result') { router.replace('/result'); return null; }
 
-  return <div key={remount}>{children}</div>;
+  return <Pass key={remount}>{children}</Pass>;
 }

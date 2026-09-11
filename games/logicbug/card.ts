@@ -1,30 +1,30 @@
-import type { CardModule } from '../index';
-import { BUGS } from '@/games/syntax_hunt/logic';
+import type { CardModule } from '@/server/cards/types';
+import { BUGS } from './logic';
 
 const card: CardModule = {
-  id: 'syntax',
+  id: 'logicbug',
   real: true,
-  name: 'The Compiler',
-  teaser: 'Snippets that will not build. One line each is at fault.',
-  ui: 'lines',
+  name: 'The Polite Liar',
+  teaser: 'Programs that run perfectly and answer wrongly.',
   rules: [
-    `${BUGS.length} C snippets. Exactly one line in each will not compile.`,
-    'Click the line at fault. Blank lines cannot be clicked.',
+    `${BUGS.length} Python programs. Every one runs. Every one is wrong.`,
+    'Read the brief first — it says what the program should do.',
+    'Click the single line that disagrees with the brief.',
     'Four wrong clicks and your terminal locks for one minute.',
-    'A lock resets this task to the first snippet.',
     'You cannot leave once you begin.',
   ],
   maxWrong: 4,
-  key: { value: 'K7', position: 1 },
-  nextClue: 'Next: the one that runs perfectly and answers wrongly.',
+  key: { value: 'A4', position: 2 },
+  nextClue: 'Next: five letters, none of them honest.',
 
   init: () => ({ i: 0, wrong: [] as number[] }),
 
   view: (s) => ({
     index: s.i,
     total: BUGS.length,
-    title: BUGS[s.i].brief,
-    lines: BUGS[s.i].lines,        // badLine and reason never leave the server
+    title: BUGS[s.i].title,
+    spec: BUGS[s.i].spec,
+    lines: BUGS[s.i].lines,
     wrong: s.wrong,
   }),
 
