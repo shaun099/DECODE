@@ -1,6 +1,7 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import Guard from '@/components/Guard';
+import Countdown from '@/components/Countdown';
 import { FlipCard } from '@/components/flip-card';
 import { TreasureBox } from '@/components/modals/TreasureBox';
 import { trpc } from '@/lib/trpc';
@@ -19,9 +20,12 @@ export default function Play() {
           keys={data.keys.map((k) => ({ value: k.value, game: `position ${k.position}` }))}
         />
 
-        <p className="mb-4 shrink-0 font-mono text-[10px] tracking-[0.25em] text-zinc-500">
-          {data.teamName} · {data.keys.length} / {data.totalKeys} KEYS
-        </p>
+        <div className="mb-4 flex w-full max-w-4xl shrink-0 items-center justify-between">
+          <span className="font-mono text-[10px] tracking-[0.25em] text-zinc-500">
+            {data.teamName} · {data.keys.length} / {data.totalKeys} KEYS
+          </span>
+          <Countdown remainingMs={data.remainingMs} />
+        </div>
 
         <div className="grid w-full max-w-4xl grid-cols-5 gap-5">
           {data.board.map((c, i) => (

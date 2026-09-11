@@ -5,6 +5,7 @@ import { db, log } from '../db';
 import { CARDS, boardView, byId } from '../cards';
 
 const LOCK_MS = 60_000;
+const GAME_MS = 3 * 60 * 60 * 1000;
 
 async function getTeam(id: string) {
   const { data } = await db.from('teams').select('*').eq('id', id).single();
@@ -14,6 +15,9 @@ async function getTeam(id: string) {
 const lockedFor = (t: { locked_until: string | null }) =>
   t.locked_until ? Math.max(0, new Date(t.locked_until).getTime() - Date.now()) : 0;
 
+const timeLeft = (t: { started_at: string | null }) =>
+  t.started_at ? Math.max(0, new Date(t.started_at).getTime() + GAME_MS - Date.now()) : GAME_MS;
+
 export const gameRouter = router({
   state: teamProcedure.query(async ({ ctx }) => {
     const t = await getTeam(ctx.teamId);
@@ -22,8 +26,14 @@ export const gameRouter = router({
     const { data: prog } = await db
       .from('progress').select('card_id, solved_at').eq('team_id', ctx.teamId);
 
+    const startedAt = t.started_at ? +new Date(t.started_at) : null;
+    const remainingMs = timeLeft(t);
+
     return {
       teamName: t.name as string,
+      startedAt,
+      remainingMs,
+      expired: !!startedAt && remainingMs <= 0,
       lockedMs: lockedFor(t),
       activeCard: (t.active_card ?? null) as string | null,
       finished: !!t.finished_at,
@@ -37,11 +47,23 @@ export const gameRouter = router({
     };
   }),
 
+  /** Stamps the three-hour clock. Safe to call twice — it only writes once. */
+  begin: teamProcedure.mutation(async ({ ctx }) => {
+    const t = await getTeam(ctx.teamId);
+    if (t.started_at) return { startedAt: +new Date(t.started_at) };
+    const now = new Date().toISOString();
+    await db.from('teams').update({ started_at: now }).eq('id', ctx.teamId);
+    await log(ctx.teamId, 'begin');
+    return { startedAt: +new Date(now) };
+  }),
+
   /** Read-only briefing. Does NOT commit the team. */
   brief: teamProcedure
     .input(z.object({ cardId: z.string() }))
     .query(async ({ ctx, input }) => {
       const t = await getTeam(ctx.teamId);
+      if (timeLeft(t) <= 0 && t.started_at)
+        throw new TRPCError({ code: 'FORBIDDEN', message: 'time is up' });
       if (lockedFor(t) > 0) throw new TRPCError({ code: 'FORBIDDEN', message: 'locked' });
       if (t.active_card && t.active_card !== input.cardId)
         throw new TRPCError({ code: 'FORBIDDEN', message: 'another task is in progress' });
@@ -62,11 +84,13 @@ export const gameRouter = router({
       };
     }),
 
-  /** Commits the team. No exit from here until solved or locked. */
+  /** Commits the team. No exit until solved or locked. */
   start: teamProcedure
     .input(z.object({ cardId: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const t = await getTeam(ctx.teamId);
+      if (timeLeft(t) <= 0 && t.started_at)
+        throw new TRPCError({ code: 'FORBIDDEN', message: 'time is up' });
       if (lockedFor(t) > 0) throw new TRPCError({ code: 'FORBIDDEN', message: 'locked' });
       if (t.active_card && t.active_card !== input.cardId)
         throw new TRPCError({ code: 'FORBIDDEN', message: 'another task is in progress' });
@@ -99,6 +123,8 @@ export const gameRouter = router({
     .input(z.object({ cardId: z.string(), payload: z.any() }))
     .mutation(async ({ ctx, input }) => {
       const t = await getTeam(ctx.teamId);
+      if (timeLeft(t) <= 0 && t.started_at)
+        throw new TRPCError({ code: 'FORBIDDEN', message: 'time is up' });
       if (lockedFor(t) > 0) throw new TRPCError({ code: 'FORBIDDEN', message: 'locked' });
       if (t.active_card !== input.cardId)
         throw new TRPCError({ code: 'FORBIDDEN', message: 'not the committed task' });
@@ -113,7 +139,7 @@ export const gameRouter = router({
       const res = card.attempt(row.state, input.payload);
       const attempts = row.attempts + (res.correct ? 0 : 1);
 
-      /* attempts exhausted -> lock the terminal, reset the card */
+      /* attempts exhausted -> lock, and reset the card */
       if (!res.correct && attempts >= card.maxWrong) {
         const until = new Date(Date.now() + LOCK_MS).toISOString();
         await db.from('progress')
@@ -166,6 +192,10 @@ export const gameRouter = router({
   final: teamProcedure
     .input(z.object({ answer: z.string() }))
     .mutation(async ({ ctx, input }) => {
+      const t = await getTeam(ctx.teamId);
+      if (timeLeft(t) <= 0 && t.started_at)
+        throw new TRPCError({ code: 'FORBIDDEN', message: 'time is up' });
+
       const { data: keys } = await db
         .from('keys').select('*').eq('team_id', ctx.teamId).order('position');
 
