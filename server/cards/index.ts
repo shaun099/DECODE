@@ -7,10 +7,11 @@ import sudoku from '@/games/sudoku/card';
 import crossword from '@/games/crossword/card';
 import { DECOYS } from '@/games/decoys/card';
 import spot from '@/games/spot/card';
+import passwordFinding from '@/games/PasswordFinding/card';
 
 export type { CardModule };
 
-export const CARDS: CardModule[] = [syntax, logicbug, phishing, quiz, sudoku, crossword, spot, ...DECOYS];
+export const CARDS: CardModule[] = [syntax, logicbug, phishing, quiz, sudoku, crossword, spot, passwordFinding, ...DECOYS];
 export const byId = (id: string) => CARDS.find((c) => c.id === id);
 
 function mulberry32(a: number) {
