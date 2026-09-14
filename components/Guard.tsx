@@ -29,9 +29,27 @@ export default function Guard({ children }: { children: React.ReactNode }) {
     structuralSharing: true,
   });
 
-  const locked = q.data?.locked ?? false;
+  const s = q.data;
+  const locked = s?.locked ?? false;
 
-  // a lock just cleared — the server reset the card, so discard stale UI state
+  /* Work out where the player is allowed to be. No navigation during render. */
+  let target: string | null = null;
+  if (q.error) {
+    target = '/';
+  } else if (s) {
+    if (s.expired && path !== '/result') target = '/result';
+    else if (s.finished && path !== '/result') target = '/result';
+    else if (!s.locked && s.activeCard && path !== `/play/card/${s.activeCard}`) {
+      target = `/play/card/${s.activeCard}`;
+    }
+  }
+
+  /* All navigation happens here, after render — this is what React was complaining about. */
+  useEffect(() => {
+    if (target) router.replace(target);
+  }, [target, router]);
+
+  /* A lock just cleared — the server reset the card, so discard stale UI state. */
   useEffect(() => {
     if (wasLocked.current && !locked) {
       setRemount((n) => n + 1);
@@ -41,15 +59,17 @@ export default function Guard({ children }: { children: React.ReactNode }) {
   }, [locked, router]);
 
   if (q.isLoading) return null;
-  if (q.error) { router.replace('/'); return null; }
 
-  const s = q.data!;
+  if (q.error) {
+    return (
+      <div className="flex min-h-screen items-center justify-center px-4 text-center">
+        <p className="font-mono text-sm text-zinc-500">Signing you out…</p>
+      </div>
+    );
+  }
 
-  /* 1 — time is up */
-  if (s.expired && path !== '/result') { router.replace('/result'); return null; }
-
-  /* 2 — locked out */
-  if (s.locked) {
+  /* locked out */
+  if (s!.locked) {
     return (
       <div className="flex min-h-screen items-center justify-center px-4">
         <div className="max-w-md border-2 border-red-900 bg-black/60 px-10 py-10 text-center">
@@ -59,7 +79,7 @@ export default function Guard({ children }: { children: React.ReactNode }) {
             can be opened until this clears.
           </p>
 
-          <LockClock seconds={s.lockedSec} />
+          <LockClock seconds={s!.lockedSec} />
 
           <p className="mt-6 font-mono text-[11px] tracking-[0.2em] text-zinc-600">
             THE THREE HOUR CLOCK KEEPS RUNNING
@@ -69,20 +89,17 @@ export default function Guard({ children }: { children: React.ReactNode }) {
     );
   }
 
-  /* 3 — committed to a card */
-  const wanted = s.activeCard ? `/play/card/${s.activeCard}` : null;
-  if (wanted && path !== wanted) {
-    router.replace(wanted);
+  /* being redirected — hold, never show the children */
+  if (target) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-3 px-4 text-center">
-        <p className="text-lg font-bold tracking-[0.2em] text-emerald-300">TASK IN PROGRESS</p>
-        <p className="text-sm text-zinc-500">Returning you to it.</p>
+        <p className="text-lg font-bold tracking-[0.2em] text-emerald-300">
+          {target.startsWith('/play/card/') ? 'TASK IN PROGRESS' : 'ONE MOMENT'}
+        </p>
+        <p className="text-sm text-zinc-500">Taking you there.</p>
       </div>
     );
   }
-
-  /* 4 — already finished */
-  if (s.finished && path !== '/result') { router.replace('/result'); return null; }
 
   return <Pass key={remount}>{children}</Pass>;
 }

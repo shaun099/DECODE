@@ -22,6 +22,7 @@ export default function QuizGame({ hud, view, send }: GameProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [result, setResult] = useState<ResultState | null>(null);
   const [nextTimer, setNextTimer] = useState<NodeJS.Timeout | null>(null);
+  const [roundLocked, setRoundLocked] = useState(false); // true when server signals lock/done
 
   // Track question change to reset state cleanly
   const currentQRef = useRef<string>(question);
@@ -69,12 +70,15 @@ export default function QuizGame({ hud, view, send }: GameProps) {
         correctAnswer: rightAnswerIndex,
         picked: optionIndex,
       });
-      setIsSubmitting(false);
 
-      // If finished or locked, CardPage handles the transition immediately
+      // If finished or locked, CardPage handles the transition — don't re-enable game
       if (res.done || res.locked) {
+        setRoundLocked(true);
+        setIsSubmitting(false);
         return;
       }
+
+      setIsSubmitting(false);
 
       // Auto-advance after 1.4s so player has smooth time to review
       const timer = setTimeout(() => {
@@ -89,6 +93,8 @@ export default function QuizGame({ hud, view, send }: GameProps) {
   };
 
   const handleAdvanceNow = () => {
+    // Don't allow advancing when the round is over (locked or done)
+    if (roundLocked) return;
     if (nextTimer) {
       clearTimeout(nextTimer);
       setNextTimer(null);
@@ -194,7 +200,7 @@ export default function QuizGame({ hud, view, send }: GameProps) {
                 key={i}
                 type="button"
                 onClick={() => handleChoose(i)}
-                disabled={picked !== null || isSubmitting}
+                disabled={picked !== null || isSubmitting || roundLocked}
                 className={`flex items-center gap-4 rounded-xl border-2 px-5 py-4 text-left text-base leading-snug transition-all duration-200 ${
                   picked !== null ? 'cursor-default' : 'cursor-pointer'
                 } ${cardStyle}`}
@@ -233,8 +239,13 @@ export default function QuizGame({ hud, view, send }: GameProps) {
             type="button"
             autoFocus
             onClick={handleAdvanceNow}
+            disabled={roundLocked}
             className={`flex h-full w-full items-center justify-between rounded-xl border-2 px-6 font-mono text-xs font-bold uppercase tracking-[0.2em] transition-all ${
-              result.correct
+              roundLocked
+                ? result.correct
+                  ? 'border-emerald-500 bg-emerald-500/20 text-emerald-300 cursor-default'
+                  : 'border-red-600 bg-red-950/40 text-red-300 cursor-default'
+                : result.correct
                 ? 'border-emerald-500 bg-emerald-500/15 text-emerald-200 hover:bg-emerald-500 hover:text-black'
                 : 'border-red-500/80 bg-red-500/15 text-red-200 hover:bg-red-500 hover:text-white'
             }`}
@@ -242,14 +253,20 @@ export default function QuizGame({ hud, view, send }: GameProps) {
             <span>
               {result.correct ? '✓ CORRECT ANSWER (+1)' : '✕ INCORRECT ATTEMPT'}
             </span>
-            <span className="flex items-center gap-1.5 text-[11px] lowercase tracking-normal text-zinc-300">
-              click to advance <span className="text-sm font-bold">→</span>
-            </span>
+            {roundLocked ? (
+              <span className="flex items-center gap-1.5 text-[11px] lowercase tracking-normal text-zinc-400 animate-pulse">
+                transitioning...
+              </span>
+            ) : (
+              <span className="flex items-center gap-1.5 text-[11px] lowercase tracking-normal text-zinc-300">
+                click to advance <span className="text-sm font-bold">→</span>
+              </span>
+            )}
           </button>
         ) : (
           <div className="flex h-full items-center justify-between px-2 font-mono text-[11px] text-zinc-500">
             <span>Select one option to submit. No second guesses.</span>
-            <span>4 mistakes allowed per round</span>
+            <span>{need - score} more correct needed &bull; {view?.maxWrong ?? 4} wrong = lock</span>
           </div>
         )}
       </div>

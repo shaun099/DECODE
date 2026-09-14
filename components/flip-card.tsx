@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { motion, easeOut } from 'motion/react';
-import { Cpu, Shield, CheckCircle2, Lock, ArrowUpRight, Sparkles, Terminal } from 'lucide-react';
+import { CheckCircle2, Lock, ArrowUpRight, Terminal } from 'lucide-react';
 
 export interface FlipCardData {
   name: string;
@@ -10,33 +10,39 @@ export interface FlipCardData {
   game: string;
 }
 
-/** Soft holographic light streaks creating depth on the dark card surface */
-function HolographicStreaks({ dim = false }: { dim?: boolean }) {
-  const bars = [
-    { l: -5, w: 16, o: 0.25 },
-    { l: 12, w: 6, o: 0.15 },
-    { l: 24, w: 10, o: 0.2 },
-    { l: 48, w: 5, o: 0.12 },
-    { l: 68, w: 12, o: 0.18 },
-    { l: 85, w: 14, o: 0.22 },
+/**
+ * Hard-edged diagonal panels. Clip-path shards, no blur — the whole look
+ * comes from crisp boundaries between lit and unlit faces.
+ */
+function Shards({ dim = false, lit = false }: { dim?: boolean; lit?: boolean }) {
+  const k = lit ? 1.35 : 1;
+
+  const shards = [
+    // left cluster
+    { clip: 'polygon(0% 0%, 26% 0%, 0% 82%)', g: '160deg, #3ddc84, #157a42', o: 0.90 * k },
+    { clip: 'polygon(0% 42%, 22% 0%, 34% 0%, 0% 100%)', g: '160deg, #1f9c56, #0a3d22', o: 0.62 * k },
+    { clip: 'polygon(0% 88%, 30% 34%, 44% 66%, 16% 100%)', g: '150deg, #2fbd6c, #0d4d2b', o: 0.48 * k },
+    // right cluster
+    { clip: 'polygon(100% 0%, 100% 74%, 66% 0%)', g: '200deg, #3ddc84, #12683a', o: 0.86 * k },
+    { clip: 'polygon(78% 0%, 100% 0%, 100% 100%, 88% 100%)', g: '200deg, #1a8c4c, #072d19', o: 0.55 * k },
+    { clip: 'polygon(100% 46%, 100% 100%, 62% 100%)', g: '210deg, #2aa862, #0a3f24', o: 0.44 * k },
   ];
 
   return (
     <div
-      className={`pointer-events-none absolute inset-0 overflow-hidden transition-opacity duration-700 ${
-        dim ? 'opacity-20' : 'opacity-100'
-      }`}
+      className={
+        'pointer-events-none absolute inset-0 overflow-hidden transition-opacity duration-700 ' +
+        (dim ? 'opacity-30' : 'opacity-100')
+      }
     >
-      {bars.map((b, i) => (
+      {shards.map((s, i) => (
         <div
           key={i}
-          className="absolute -top-1/3 h-[180%] rounded-full"
+          className="absolute inset-0"
           style={{
-            left: `${b.l}%`,
-            width: `${b.w}%`,
-            transform: 'rotate(32deg)',
-            background: `linear-gradient(180deg, rgba(16,185,129,0) 0%, rgba(52,211,153,${b.o}) 50%, rgba(16,185,129,0) 100%)`,
-            filter: 'blur(10px)',
+            clipPath: s.clip,
+            background: `linear-gradient(${s.g})`,
+            opacity: s.o,
           }}
         />
       ))}
@@ -57,10 +63,7 @@ export function FlipCard({
 }) {
   const [flipped, setFlipped] = React.useState(false);
   const [touch, setTouch] = React.useState(false);
-
-  React.useEffect(() => {
-    setTouch('ontouchstart' in window);
-  }, []);
+  React.useEffect(() => setTouch('ontouchstart' in window), []);
 
   const solved = state === 'solved';
   const cardNum = String(index + 1).padStart(2, '0');
@@ -70,15 +73,19 @@ export function FlipCard({
     back: { rotateY: 180, transition: { duration: 0.6, ease: easeOut } },
   };
 
+  const shell =
+    'absolute inset-0 flex flex-col justify-between overflow-hidden rounded-xl border ' +
+    'backface-hidden transition-colors duration-500 bg-black ';
+
   return (
-    <div className="group relative aspect-[3/4] w-full select-none">
-      {/* Dynamic Hover Aura Glow */}
+    <div className="group relative h-full w-full select-none">
       <div
-        className={`pointer-events-none absolute -inset-1.5 -z-10 rounded-3xl blur-xl transition-all duration-500 ${
-          solved
-            ? 'bg-emerald-500/25 opacity-100 shadow-[0_0_25px_rgba(16,185,129,0.3)]'
-            : 'bg-emerald-500/0 opacity-0 group-hover:bg-emerald-500/20 group-hover:opacity-100'
-        }`}
+        className={
+          'pointer-events-none absolute -inset-1.5 -z-10 rounded-2xl blur-xl transition-all duration-500 ' +
+          (solved
+            ? 'bg-emerald-500/25 opacity-100'
+            : 'bg-emerald-500/0 opacity-0 group-hover:bg-emerald-500/20 group-hover:opacity-100')
+        }
       />
 
       <div
@@ -88,157 +95,107 @@ export function FlipCard({
         onMouseEnter={() => !touch && setFlipped(true)}
         onMouseLeave={() => !touch && setFlipped(false)}
       >
-        {/* =========================================================================
-            FRONT FACE (The Sealed / Encrypted Matrix Node)
-            ========================================================================= */}
+        {/* ---------------- FRONT ---------------- */}
         <motion.div
-          className={`absolute inset-0 flex flex-col justify-between overflow-hidden rounded-2xl border p-3.5 backface-hidden transition-colors duration-500 ${
-            solved
-              ? 'border-emerald-400/60 bg-gradient-to-b from-[#0d1812] via-[#070e0a] to-[#040806] shadow-[0_0_20px_rgba(16,185,129,0.25)]'
-              : 'border-emerald-500/20 bg-gradient-to-b from-[#0c1510] via-[#070b09] to-[#040605] group-hover:border-emerald-400/70 group-hover:shadow-[0_0_20px_rgba(16,185,129,0.2)]'
-          }`}
+          className={
+            shell + 'p-3 ' +
+            (solved
+              ? 'border-emerald-400/70'
+              : 'border-emerald-900/60 group-hover:border-emerald-500/70')
+          }
           animate={flipped ? 'back' : 'front'}
           variants={variants}
           style={{ transformStyle: 'preserve-3d' }}
         >
-          {/* Cyber Micro-Grid Background Pattern */}
+          <Shards lit={solved} />
+
+          {/* black core, so the panels stay at the edges */}
           <div
-            className="pointer-events-none absolute inset-0 opacity-40"
+            className="pointer-events-none absolute inset-0"
             style={{
-              backgroundImage: 'radial-gradient(circle, #10b981 0.75px, transparent 0.75px)',
-              backgroundSize: '14px 14px',
+              background:
+                'radial-gradient(ellipse 62% 58% at 50% 50%, #000 40%, rgba(0,0,0,.85) 68%, transparent 100%)',
             }}
           />
 
-          {/* Holographic Streaks & Vignette */}
-          <HolographicStreaks />
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(4,7,5,0.85)_25%,rgba(4,7,5,0.35)_75%,transparent_100%)]" />
-
-          {/* Tech Corner Brackets */}
-          <span className="pointer-events-none absolute left-2 top-2 font-mono text-[9px] text-emerald-500/40">┌</span>
-          <span className="pointer-events-none absolute right-2 top-2 font-mono text-[9px] text-emerald-500/40">┐</span>
-          <span className="pointer-events-none absolute bottom-2 left-2 font-mono text-[9px] text-emerald-500/40">└</span>
-          <span className="pointer-events-none absolute bottom-2 right-2 font-mono text-[9px] text-emerald-500/40">┘</span>
-
-          {/* Top Bar: Card Tag + Solved Chip */}
-          <div className="relative z-10 flex items-center justify-between font-mono text-[9px]">
-            <span className="flex items-center gap-1 font-bold tracking-widest text-emerald-500/80">
-              <span className="h-1 w-1 rounded-full bg-emerald-400" />
-              NODE//{cardNum}
-            </span>
-
+          {/* top bar */}
+          <div className="relative z-10 flex items-start justify-between font-mono text-[9px]">
+            <span className="font-bold tracking-widest text-emerald-400/80">{cardNum}</span>
             {solved ? (
-              <span className="flex items-center gap-0.5 rounded bg-emerald-500/20 px-1.5 py-0.5 font-bold text-emerald-300 ring-1 ring-emerald-500/50">
-                <CheckCircle2 className="h-2.5 w-2.5" />
-                CLEARED
-              </span>
+              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-300" />
             ) : (
-              <span className="flex items-center gap-0.5 rounded bg-zinc-900/90 px-1.5 py-0.5 text-zinc-500 border border-zinc-800">
-                <Lock className="h-2 w-2" />
-                SEALED
-              </span>
+              <Lock className="h-3 w-3 text-zinc-600" />
             )}
           </div>
 
-          {/* Center Graphic: Futuristic Cipher Core */}
-          <div className="relative z-10 flex flex-col items-center justify-center text-center">
-            {/* Holographic Emblem */}
-            <div
-              className={`relative mb-2.5 flex h-12 w-12 items-center justify-center rounded-xl border transition-all duration-500 ${
-                solved
-                  ? 'border-emerald-400 bg-emerald-500/20 text-emerald-300 shadow-[0_0_15px_rgba(52,211,153,0.5)]'
-                  : 'border-emerald-500/30 bg-emerald-950/40 text-emerald-400/70 group-hover:border-emerald-400 group-hover:text-emerald-300 group-hover:shadow-[0_0_15px_rgba(52,211,153,0.3)]'
-              }`}
+          {/* DECODE — large, diagonal, running with the shards */}
+          <div className="relative z-10 flex flex-1 items-center justify-center">
+            <h2
+              className={
+                'whitespace-nowrap font-black leading-none tracking-[0.16em] transition-colors duration-300 ' +
+                (solved ? 'text-emerald-200' : 'text-zinc-100 group-hover:text-emerald-200')
+              }
+              style={{
+                transform: 'rotate(-54deg)',
+                fontSize: 'clamp(20px, 3.4vw, 34px)',
+                textShadow: '0 0 26px rgba(0,0,0,.95), 0 0 40px rgba(52,211,153,.35)',
+              }}
             >
-              <Cpu className="h-6 w-6" />
-              <div className="absolute -inset-0.5 rounded-xl border border-emerald-500/20 animate-pulse" />
-            </div>
-
-            {/* DECODE Title */}
-            <h2 className="font-mono text-xs font-black tracking-[0.38em] text-zinc-300 transition-colors duration-300 group-hover:text-emerald-200">
               DECODE
             </h2>
-            <span className="mt-0.5 font-mono text-[8px] tracking-[0.2em] text-emerald-600">
-              ENCRYPTED MATRIX
-            </span>
           </div>
 
-          {/* Bottom Bar: Status Pill */}
-          <div className="relative z-10 text-center font-mono text-[8px] tracking-[0.24em]">
-            <span
-              className={`inline-block rounded-full px-2 py-0.5 transition-colors ${
-                solved
-                  ? 'bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/40 shadow-[0_0_8px_rgba(16,185,129,0.3)]'
-                  : 'bg-zinc-900/70 text-zinc-500 border border-zinc-800/80 group-hover:border-emerald-500/30 group-hover:text-emerald-400/80'
-              }`}
-            >
-              {solved ? 'FRAGMENT DECRYPTED' : 'HOVER TO SCAN'}
+          {/* bottom */}
+          <div className="relative z-10 text-center font-mono text-[8px] tracking-[0.26em]">
+            <span className={solved ? 'text-emerald-300' : 'text-zinc-600'}>
+              {solved ? 'CLEARED' : 'SEALED'}
             </span>
           </div>
         </motion.div>
 
-        {/* =========================================================================
-            BACK FACE (The Decrypted Briefing / Challenge Card)
-            ========================================================================= */}
+        {/* ---------------- BACK ---------------- */}
         <motion.div
-          className={`absolute inset-0 flex flex-col justify-between overflow-hidden rounded-2xl border p-4 backface-hidden transition-colors duration-500 ${
-            solved
-              ? 'border-emerald-400/70 bg-gradient-to-b from-[#0e1a14] via-[#07110c] to-[#040906] shadow-[0_0_20px_rgba(16,185,129,0.3)]'
-              : 'border-emerald-500/40 bg-gradient-to-b from-[#0b1712] via-[#07100b] to-[#040806] shadow-xl'
-          }`}
+          className={
+            shell + 'p-4 ' +
+            (solved ? 'border-emerald-400/70' : 'border-emerald-700/60')
+          }
           initial={{ rotateY: 180 }}
           animate={flipped ? 'front' : 'back'}
           variants={variants}
           style={{ transformStyle: 'preserve-3d', rotateY: 180 }}
         >
-          {/* Subtle Streaks and Grid */}
-          <HolographicStreaks dim />
-          <div className="pointer-events-none absolute inset-0 bg-[#040806]/80 backdrop-blur-sm" />
+          <Shards dim />
+          <div className="pointer-events-none absolute inset-0 bg-black/86" />
 
-          {/* Tech Corner Brackets */}
-          <span className="pointer-events-none absolute left-2 top-2 font-mono text-[9px] text-emerald-500/40">┌</span>
-          <span className="pointer-events-none absolute right-2 top-2 font-mono text-[9px] text-emerald-500/40">┐</span>
-          <span className="pointer-events-none absolute bottom-2 left-2 font-mono text-[9px] text-emerald-500/40">└</span>
-          <span className="pointer-events-none absolute bottom-2 right-2 font-mono text-[9px] text-emerald-500/40">┘</span>
-
-          {/* Top Tag Bar */}
           <div className="relative z-10 flex items-center justify-between font-mono text-[9px]">
             <span className="flex items-center gap-1 font-bold text-emerald-400">
               <Terminal className="h-2.5 w-2.5" />
               BRIEFING
             </span>
-            <span className="text-zinc-500">#{cardNum}</span>
+            <span className="text-zinc-600">{cardNum}</span>
           </div>
 
-          {/* Mission Info Area */}
           <div className="relative z-10 min-h-0 flex-1 py-2">
-            <h3 className="font-mono text-xs font-bold leading-snug text-emerald-200">
-              {data.name}
-            </h3>
-            <div className="my-2 h-px w-8 bg-emerald-500/40" />
-            <p className="font-mono text-[10px] leading-relaxed text-zinc-300">
-              {data.hint}
-            </p>
+            <h3 className="text-[13px] font-bold leading-snug text-emerald-200">{data.name}</h3>
+            <div className="my-2 h-px w-8 bg-emerald-500/50" />
+            <p className="font-mono text-[10px] leading-relaxed text-zinc-300">{data.hint}</p>
           </div>
 
-          {/* Action Trigger Button */}
-          <div className="relative z-10 pt-1">
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                onPlay?.();
-              }}
-              className={`flex w-full items-center justify-center gap-1.5 rounded-xl border py-2.5 font-mono text-[10px] font-bold tracking-[0.2em] transition-all duration-200 ${
-                solved
-                  ? 'border-emerald-400 bg-emerald-500/20 text-emerald-200 hover:bg-emerald-500 hover:text-black shadow-[0_0_12px_rgba(16,185,129,0.3)]'
-                  : 'border-emerald-500/60 bg-emerald-500/10 text-emerald-300 hover:border-emerald-400 hover:bg-emerald-500 hover:text-black hover:shadow-[0_0_15px_rgba(52,211,153,0.4)]'
-              }`}
-            >
-              <span>{solved ? 'REOPEN TASK' : 'INITIALIZE'}</span>
-              <ArrowUpRight className="h-3 w-3" />
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={(e) => { e.stopPropagation(); onPlay?.(); }}
+            className={
+              'relative z-10 flex w-full items-center justify-center gap-1.5 rounded-lg border py-2.5 ' +
+              'font-mono text-[10px] font-bold tracking-[0.2em] transition-all duration-200 ' +
+              (solved
+                ? 'border-emerald-400 bg-emerald-500/20 text-emerald-200 hover:bg-emerald-500 hover:text-black'
+                : 'border-emerald-600/70 bg-emerald-500/10 text-emerald-300 ' +
+                'hover:border-emerald-400 hover:bg-emerald-500 hover:text-black')
+            }
+          >
+            <span>{solved ? 'REOPEN' : 'INITIALIZE'}</span>
+            <ArrowUpRight className="h-3 w-3" />
+          </button>
         </motion.div>
       </div>
     </div>

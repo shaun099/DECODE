@@ -4,11 +4,13 @@ import logicbug from '@/games/logicbug/card';
 import phishing from '@/games/phishing/card';
 import quiz from '@/games/quiz/card';
 import sudoku from '@/games/sudoku/card';
+import crossword from '@/games/crossword/card';
 import { DECOYS } from '@/games/decoys/card';
+import spot from '@/games/spot/card';
 
 export type { CardModule };
 
-export const CARDS: CardModule[] = [syntax, logicbug, phishing, quiz, sudoku, ...DECOYS];
+export const CARDS: CardModule[] = [syntax, logicbug, phishing, quiz, sudoku, crossword, spot, ...DECOYS];
 export const byId = (id: string) => CARDS.find((c) => c.id === id);
 
 function mulberry32(a: number) {

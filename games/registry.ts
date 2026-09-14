@@ -6,7 +6,9 @@ import PhishingGame from './phishing/Game';
 import QuizGame from './quiz/Game';
 import SudokuGame from './sudoku/Game';
 import DecoyGame from './decoys/Game';
+import CrosswordGame from './crossword/Game';
 import { DECOY_IDS } from './decoys/ids';
+import SpotGame from './spot/Game';
 
 export interface GameProps {
   hud: ReactNode;
@@ -20,6 +22,8 @@ const MAP: Record<string, ComponentType<GameProps>> = {
   phishing: PhishingGame,
   quiz: QuizGame,
   sudoku: SudokuGame,
+  crossword: CrosswordGame,
+  spot: SpotGame,
 };
 
 DECOY_IDS.forEach((id) => { MAP[id] = DecoyGame; });
