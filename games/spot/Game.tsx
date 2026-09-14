@@ -41,12 +41,14 @@ export default function SpotGame({ hud, view, send }: GameProps) {
     if (ctx) renderCanvasScene(ctx, 'B');
   }, []);
 
-  /* a difference was marked */
+  /* a difference was marked — countRef tracks previous marks count */
   useEffect(() => {
     if (marks.length === countRef.current) return;
+    const wasCorrect = marks.length > countRef.current;
     countRef.current = marks.length;
     setBusy(false);
     setRipple(null);
+    if (!wasCorrect) return;
     const latest = marks[marks.length - 1];
     if (!latest) return;
     setFlash(latest.id);
@@ -81,11 +83,14 @@ export default function SpotGame({ hud, view, send }: GameProps) {
   function click(e: React.MouseEvent<HTMLDivElement>, panel: 'A' | 'B') {
     if (busy) return;
     const { x, y, px, py } = coords(e);
-    const before = marks.length;
+    const before = countRef.current;
     setBusy(true);
     send({ x, y, panel });
+    // Use a timeout to check if the server added a new mark.
+    // We compare against countRef (updated by the effect) to avoid stale closure.
     setTimeout(() => {
-      if (marks.length === before) {
+      if (countRef.current === before) {
+        // No new mark was added — wrong click
         setRipple({ id: Date.now(), x: px, y: py, panel });
         setBusy(false);
         setTimeout(() => setRipple(null), 700);
@@ -204,8 +209,8 @@ export default function SpotGame({ hud, view, send }: GameProps) {
 
             <canvas ref={attach} width={W} height={H} className="block h-auto w-full" />
 
-            {/* marks — only on the panel they were clicked in */}
-            {marks.filter((m) => m.panel === label).map((m) => {
+            {/* marks — show on BOTH panels so user sees which differences are found */}
+            {marks.map((m) => {
               const fresh = flash === m.id;
               return (
                 <span
@@ -284,4 +289,4 @@ export default function SpotGame({ hud, view, send }: GameProps) {
       </div>
     </div>
   );
-}
+}
