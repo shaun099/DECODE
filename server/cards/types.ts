@@ -1,3 +1,12 @@
+export type CardData = ReturnType<typeof JSON.parse>;
+
+export type CardAttemptResult = {
+  state: CardData;
+  correct: boolean;
+  done: boolean;
+  [key: string]: CardData;
+};
+
 export interface CardModule {
   id: string;
   real: boolean;
@@ -7,15 +16,7 @@ export interface CardModule {
   maxWrong: number;
   key?: { value: string; position: number };
   nextClue?: string;
-  init(): any;
-  view(state: any): any;
-  attempt(state: any, payload: any): { state: any; correct: boolean; done: boolean };
-  attempt(
-    state: any,
-    payload: any
-  ): { state: any; correct: boolean; done: boolean; [key: string]: any } | Promise<{ state: any; correct: boolean; done: boolean; [key: string]: any }>;
-  ):
-    | { state: any; correct: boolean; done: boolean; [key: string]: any }
-    | Promise<{ state: any; correct: boolean; done: boolean; [key: string]: any }>;
+  init(): CardData;
+  view(state: CardData): CardData;
+  attempt(state: CardData, payload: CardData): CardAttemptResult | Promise<CardAttemptResult>;
 }
-} 
