@@ -101,6 +101,10 @@ export const gameRouter = router({
       const { data: existing } = await db.from('progress')
         .select('*').eq('team_id', ctx.teamId).eq('card_id', card.id).maybeSingle();
 
+      if (existing?.solved_at) {
+        throw new TRPCError({ code: 'FORBIDDEN', message: 'this task has already been solved' });
+      }
+
       let state = existing?.state;
       if (!existing) {
         state = card.init();

@@ -121,6 +121,22 @@ export default function CardPage({ params }: { params: Promise<{ cardId: string 
   /* ---------- briefing ---------- */
   if (!session) {
     const b = brief.data!;
+    if (b.solved) {
+      return (
+        <Guard>
+          <div className="mx-auto flex min-h-screen max-w-lg flex-col items-center justify-center gap-6 px-6 text-center">
+            <h1 className="text-3xl font-black tracking-[0.14em] text-zinc-400">TASK ALREADY CLEARED</h1>
+            <p className="font-mono text-xs text-zinc-500">This task has already been completed by your team.</p>
+            <button
+              onClick={() => router.replace('/play')}
+              className="border-2 border-zinc-700 px-6 py-3 font-mono text-[12px] tracking-[0.2em] text-zinc-300 transition-colors hover:border-zinc-500 hover:text-zinc-100"
+            >
+              BACK TO THE BOARD
+            </button>
+          </div>
+        </Guard>
+      );
+    }
     return (
       <div className="mx-auto flex min-h-screen max-w-lg flex-col justify-center gap-7 px-6 py-10">
         <div>
