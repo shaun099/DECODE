@@ -19,16 +19,34 @@ const card: CardModule = {
 
   init: () => ({ i: 0, wrong: [] as number[] }),
 
-  view: (s) => ({
-    index: s.i,
-    total: BUGS.length,
-    title: BUGS[s.i].brief,
-    lines: BUGS[s.i].lines,      // badLine and reason never leave the server
-    wrong: s.wrong,
-  }),
+  view: (s) => {
+    const bug = BUGS[s.i];
+    if (!bug) {
+      return {
+        index: s.i,
+        total: BUGS.length,
+        title: 'Complete',
+        lines: [],
+        wrong: s.wrong,
+      };
+    }
+
+    return {
+      index: s.i,
+      total: BUGS.length,
+      title: bug.brief,
+      lines: bug.lines,      // badLine and reason never leave the server
+      wrong: s.wrong,
+    };
+  },
 
   attempt: (s, p: { line: number }) => {
-    if (p.line !== BUGS[s.i].badLine) {
+    const bug = BUGS[s.i];
+    if (!bug) {
+      return { state: s, correct: false, done: true };
+    }
+
+    if (p.line !== bug.badLine) {
       return { state: { ...s, wrong: [...s.wrong, p.line] }, correct: false, done: false };
     }
     const next = s.i + 1;

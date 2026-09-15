@@ -23,6 +23,19 @@ const card: CardModule = {
 
   view: (s) => {
     const e = EMAILS[s.i];
+    if (!e) {
+      return {
+        index: s.i,
+        total: EMAILS.length,
+        brand: 'Complete',
+        rows: [],
+        body: [],
+        found: s.found,
+        wrong: s.wrong,
+        remaining: 0,
+      };
+    }
+
     return {
       index: s.i,
       total: EMAILS.length,
@@ -43,6 +56,10 @@ const card: CardModule = {
 
   attempt: (s, p: { id: string }) => {
     const e = EMAILS[s.i];
+    if (!e) {
+      return { state: s, correct: false, done: true };
+    }
+
     if (!e.suspects.includes(p.id)) {
       return { state: { ...s, wrong: [...s.wrong, p.id] }, correct: false, done: false };
     }

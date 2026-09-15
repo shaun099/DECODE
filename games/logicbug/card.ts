@@ -29,12 +29,32 @@ const card: CardModule = {
   }),
 
   attempt: (s, p: { line: number }) => {
-    if (p.line !== BUGS[s.i].badLine) {
-      return { state: { ...s, wrong: [...s.wrong, p.line] }, correct: false, done: false };
-    }
-    const next = s.i + 1;
-    return { state: { i: next, wrong: [] }, correct: true, done: next >= BUGS.length };
-  },
+  const bug = BUGS[s.i];
+
+  if (!bug) {
+    return {
+      state: s,
+      correct: false,
+      done: true,
+    };
+  }
+
+  if (p.line !== bug.badLine) {
+    return {
+      state: { ...s, wrong: [...s.wrong, p.line] },
+      correct: false,
+      done: false,
+    };
+  }
+
+  const next = s.i + 1;
+
+  return {
+    state: { i: next, wrong: [] },
+    correct: true,
+    done: next >= BUGS.length,
+  };
+},
 };
 
 export default card;
