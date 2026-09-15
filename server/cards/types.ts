@@ -14,4 +14,8 @@ export interface CardModule {
     state: any,
     payload: any
   ): { state: any; correct: boolean; done: boolean; [key: string]: any } | Promise<{ state: any; correct: boolean; done: boolean; [key: string]: any }>;
+  ):
+    | { state: any; correct: boolean; done: boolean; [key: string]: any }
+    | Promise<{ state: any; correct: boolean; done: boolean; [key: string]: any }>;
+}
 } 
