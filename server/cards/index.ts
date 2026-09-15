@@ -9,13 +9,14 @@ import { DECOYS } from '@/games/decoys/card';
 import spot from '@/games/spot/card';
 import leetcode from '@/games/leetcode/card';
 import password from '@/games/password/card';
+import captcha from '@/games/captcha/card';
+import maze from '@/games/maze/card';
 import blindcode from '@/games/blindcode/card';
-
-export const CARDS: CardModule[] = [syntax, logicbug, phishing, quiz, sudoku, crossword, spot, leetcode, password,blindcode, ...DECOYS];
-
 
 export type { CardModule };
 
+
+export const CARDS: CardModule[] = [syntax, logicbug, phishing, quiz, sudoku, crossword, spot, leetcode, password,captcha, maze, blindcode,...DECOYS];
 export const byId = (id: string) => CARDS.find((c) => c.id === id);
 
 function mulberry32(a: number) {
