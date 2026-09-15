@@ -12,6 +12,7 @@ import CaptchaGame from './captcha/Game';
 import DecoyGame from './decoys/Game';
 import { DECOY_IDS } from './decoys/ids';
 import LeetCodeGame from './leetcode/Game';
+import MazeGame from './maze/Game';
 
 export interface GameProps {
   hud: ReactNode;
@@ -30,6 +31,7 @@ const MAP: Record<string, ComponentType<GameProps>> = {
   spot: SpotGame,
   password: PasswordGame,
   captcha: CaptchaGame,
+  maze: MazeGame,
 };
 
 DECOY_IDS.forEach((id) => { MAP[id] = DecoyGame; });
