@@ -5,20 +5,9 @@ export interface Hint {
 }
 
 export const hints: Hint[] = [
-  { name: 'DECODE', hint: 'The Dance Of Numbers', game: 'sudoku' },
-  { name: 'DECODE', hint: 'The Letter of Lie', game: 'phishing' },
-  { name: 'DECODE', hint: 'The Examiner', game: 'tech_quiz' },
-  { name: 'DECODE', hint: 'The Grammar', game: 'syntax_hunt' },
-  { name: 'DECODE', hint: 'The Polite Liar', game: 'logic_hunt' },
-  { name: 'DECODE', hint: 'hint6', game: 'game6' },
-  { name: 'DECODE', hint: 'The Dark Terminal', game: 'blindcode' },
-  { name: 'DECODE', hint: 'hint7', game: 'game7' },
-  { name: 'DECODE', hint: 'hint8', game: 'game8' },
-  { name: 'DECODE', hint: 'hint9', game: 'game9' },
-  { name: 'DECODE', hint: 'hint10', game: 'sudoku' },
-  { name: 'DECODE', hint: 'hint11', game: 'game11' },
-  { name: 'DECODE', hint: 'hint12', game: 'game12' },
-  { name: 'DECODE', hint: 'hint13', game: 'game13' },
-  { name: 'DECODE', hint: 'hint14', game: 'game14' },
-  { name: 'DECODE', hint: 'hint15', game: 'game15' },
+  { name: 'DECODE', hint: 'The Compiler', game: 'syntax' },
+  { name: 'DECODE', hint: 'The Long Corridor', game: 'maze' },
+  { name: 'DECODE', hint: 'ByteCross', game: 'crossword' },
+  { name: 'DECODE', hint: 'The Observatory', game: 'spot' },
+  { name: 'DECODE', hint: 'The Dance of Numbers', game: 'sudoku' },
 ];

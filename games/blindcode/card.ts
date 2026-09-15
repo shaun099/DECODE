@@ -4,7 +4,7 @@ import { runJavaScript, runPython } from './runner';
 
 const card: CardModule = {
   id: 'blindcode',
-  real: true,
+  real: false,
   name: 'The Dark Terminal',
   teaser: 'Write functioning code in total darkness. You cannot see what you type.',
   rules: [
@@ -16,8 +16,7 @@ const card: CardModule = {
     'You cannot leave once you begin.',
   ],
   maxWrong: 4,
-  key: { value: 'B3', position: 8 },
-  nextClue: 'Next: light pierces the veil of the machine.',
+  nextClue: '',
 
   init: () => ({
     i: 0,

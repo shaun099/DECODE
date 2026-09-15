@@ -44,8 +44,8 @@ const card: CardModule = {
     'You cannot leave once you begin.',
   ],
   maxWrong: 3,
-  key: { value: 'M2', position: 10 },
-  nextClue: 'Next: five verification levels, each less reasonable than the last.',
+  key: { value: 'M2', position: 2 },
+  nextClue: 'Next: twenty intersecting answers that hold each other up across the grid.',
 
   init: (): State => build(1, Date.now()),
 

@@ -9,7 +9,7 @@ interface State {
 
 const card: CardModule = {
     id: 'password',
-    real: true,
+    real: false,
     name: 'The Open Door',
     teaser: 'A company website that says more than it means to.',
     rules: [
@@ -21,8 +21,7 @@ const card: CardModule = {
         'You cannot leave once you begin.',
     ],
     maxWrong: 4,
-    key: { value: 'P4', position: 8 },
-    nextClue: 'Next: two scenes that are almost the same.',
+    nextClue: '',
 
     init: (): State => ({ guesses: ['', '', '', ''], results: null, tries: 0 }),
 

@@ -15,7 +15,7 @@ interface State {
 
 const card: CardModule = {
   id: 'leetcode',
-  real: true,
+  real: false,
   name: 'The Algorist',
   teaser: 'One target. Thirteen tests. Ten locked in the dark.',
   rules: [
@@ -28,8 +28,7 @@ const card: CardModule = {
     'You cannot leave once you begin.',
   ],
   maxWrong: 6,
-  key: { value: 'L6', position: 8 },
-  nextClue: 'You have gathered the fragments. The terminal awaits the final assembly.',
+  nextClue: '',
 
   init: (): State => ({ solved: false, passedCount: 0 }),
 

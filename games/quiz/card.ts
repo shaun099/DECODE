@@ -11,7 +11,7 @@ const draw = () =>
 
 const card: CardModule = {
   id: 'quiz',
-  real: true,
+  real: false,
   name: 'The Examiner',
   teaser: 'It asks. It does not repeat itself.',
   rules: [
@@ -22,8 +22,7 @@ const card: CardModule = {
     'You cannot leave once you begin.',
   ],
   maxWrong: MAX_WRONG,
-  key: { value: 'C8', position: 4 },
-  nextClue: 'Next: the one that will not build.',
+  nextClue: '',
 
   init: () => ({ qs: draw(), i: 0, score: 0, wrongCount: 0 }),
 

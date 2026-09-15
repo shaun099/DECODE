@@ -79,11 +79,17 @@ export default function CardPage({ params }: { params: Promise<{ cardId: string 
       <Guard>
         <div className="flex min-h-screen flex-col items-center justify-center gap-7 px-4 text-center">
           <p className="font-mono text-[11px] tracking-[0.28em] text-emerald-500">
-            {done.key ? 'FRAGMENT RECOVERED' : 'NOTHING HERE'}
+            {done.key ? 'FRAGMENT RECOVERED' : 'NO FRAGMENT FOUND'}
           </p>
           <h2 className="text-3xl font-black tracking-[0.14em] text-emerald-300">
-            {done.key ? 'KEY RECOVERED' : 'DEAD END'}
+            {done.key ? 'KEY RECOVERED' : 'OOPS! NO KEY PRESENT'}
           </h2>
+
+          {!done.key && (
+            <p className="font-mono text-sm text-zinc-400">
+              This task contains no key fragment. Keep hunting on the board.
+            </p>
+          )}
 
           {done.key && (
             <p className="font-mono text-2xl tracking-[0.3em] text-emerald-300">
