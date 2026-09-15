@@ -8,10 +8,11 @@ import crossword from '@/games/crossword/card';
 import { DECOYS } from '@/games/decoys/card';
 import spot from '@/games/spot/card';
 import leetcode from '@/games/leetcode/card';
+import password from '@/games/password/card';
 
 export type { CardModule };
 
-export const CARDS: CardModule[] = [syntax, logicbug, phishing, quiz, sudoku, crossword, spot, leetcode, ...DECOYS];
+export const CARDS: CardModule[] = [syntax, logicbug, phishing, quiz, sudoku, crossword, spot, leetcode, password, ...DECOYS];
 export const byId = (id: string) => CARDS.find((c) => c.id === id);
 
 function mulberry32(a: number) {

@@ -10,6 +10,7 @@ import CrosswordGame from './crossword/Game';
 import { DECOY_IDS } from './decoys/ids';
 import SpotGame from './spot/Game';
 import LeetCodeGame from './leetcode/Game';
+import PasswordGame from './password/Game';
 
 export interface GameProps {
   hud: ReactNode;
@@ -26,6 +27,7 @@ const MAP: Record<string, ComponentType<GameProps>> = {
   crossword: CrosswordGame,
   spot: SpotGame,
   leetcode: LeetCodeGame,
+  password: PasswordGame
 };
 
 DECOY_IDS.forEach((id) => { MAP[id] = DecoyGame; });
