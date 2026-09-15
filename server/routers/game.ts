@@ -136,7 +136,8 @@ export const gameRouter = router({
         .select('*').eq('team_id', ctx.teamId).eq('card_id', card.id).single();
       if (!row || row.solved_at) throw new TRPCError({ code: 'BAD_REQUEST' });
 
-      const res = card.attempt(row.state, input.payload);
+      
+      const res = await card.attempt(row.state, input.payload);
       const attempts = row.attempts + (res.correct ? 0 : 1);
 
       /* attempts exhausted -> lock, and reset the card */
@@ -156,6 +157,7 @@ export const gameRouter = router({
           attemptsLeft: 0,
           lastAnswer: (res as any).lastAnswer ?? null,
           lastPick: (res as any).lastPick ?? null,
+          lastResult: (res as any).lastResult ?? null,
           key: null as null | { value: string; position: number },
           nextClue: null as string | null,
           view: null,
@@ -174,6 +176,7 @@ export const gameRouter = router({
           attemptsLeft: Math.max(0, card.maxWrong - attempts),
           lastAnswer: (res as any).lastAnswer ?? null,
           lastPick: (res as any).lastPick ?? null,
+          lastResult: (res as any).lastResult ?? null,
           key: null as null | { value: string; position: number },
           nextClue: null as string | null,
           view: card.view(res.state),
@@ -203,9 +206,11 @@ export const gameRouter = router({
           attemptsLeft: Math.max(0, card.maxWrong - attempts),
           lastAnswer: (res as any).lastAnswer ?? null,
           lastPick: (res as any).lastPick ?? null,
+          lastResult: (res as any).lastResult ?? null,
           key: card.key,
           nextClue: card.nextClue ?? null,
-          view: null,
+          
+          view: card.view(res.state),
         };
       }
 
@@ -218,9 +223,11 @@ export const gameRouter = router({
         attemptsLeft: Math.max(0, card.maxWrong - attempts),
         lastAnswer: (res as any).lastAnswer ?? null,
         lastPick: (res as any).lastPick ?? null,
+        lastResult: (res as any).lastResult ?? null,
         key: null as null | { value: string; position: number },
         nextClue: null as string | null,
-        view: null,
+        
+        view: card.view(res.state),
       };
     }),
 

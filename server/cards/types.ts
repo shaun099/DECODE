@@ -10,4 +10,8 @@ export interface CardModule {
   init(): any;
   view(state: any): any;
   attempt(state: any, payload: any): { state: any; correct: boolean; done: boolean };
+  attempt(
+    state: any,
+    payload: any
+  ): { state: any; correct: boolean; done: boolean; [key: string]: any } | Promise<{ state: any; correct: boolean; done: boolean; [key: string]: any }>;
 } 

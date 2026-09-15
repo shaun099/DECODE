@@ -5,12 +5,14 @@ import LogicGame from './logicbug/Game';
 import PhishingGame from './phishing/Game';
 import QuizGame from './quiz/Game';
 import SudokuGame from './sudoku/Game';
-import DecoyGame from './decoys/Game';
 import CrosswordGame from './crossword/Game';
-import { DECOY_IDS } from './decoys/ids';
 import SpotGame from './spot/Game';
-import LeetCodeGame from './leetcode/Game';
 import PasswordGame from './password/Game';
+import CaptchaGame from './captcha/Game';
+import DecoyGame from './decoys/Game';
+import { DECOY_IDS } from './decoys/ids';
+import LeetCodeGame from './leetcode/Game';
+import BlindcodeGame from './blindcode/Game';
 
 export interface GameProps {
   hud: ReactNode;
@@ -25,9 +27,11 @@ const MAP: Record<string, ComponentType<GameProps>> = {
   quiz: QuizGame,
   sudoku: SudokuGame,
   crossword: CrosswordGame,
-  spot: SpotGame,
   leetcode: LeetCodeGame,
-  password: PasswordGame
+  spot: SpotGame,
+  password: PasswordGame,
+  captcha: CaptchaGame,
+  blindcode: BlindcodeGame,
 };
 
 DECOY_IDS.forEach((id) => { MAP[id] = DecoyGame; });

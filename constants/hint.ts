@@ -11,6 +11,7 @@ export const hints: Hint[] = [
   { name: 'DECODE', hint: 'The Grammar', game: 'syntax_hunt' },
   { name: 'DECODE', hint: 'The Polite Liar', game: 'logic_hunt' },
   { name: 'DECODE', hint: 'hint6', game: 'game6' },
+  { name: 'DECODE', hint: 'The Dark Terminal', game: 'blindcode' },
   { name: 'DECODE', hint: 'hint7', game: 'game7' },
   { name: 'DECODE', hint: 'hint8', game: 'game8' },
   { name: 'DECODE', hint: 'hint9', game: 'game9' },
