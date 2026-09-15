@@ -27,7 +27,7 @@ const card: CardModule = {
     wrong: s.wrong,
   }),
 
- attempt: (s, p: { line: number }) => {
+  attempt: (s, p: { line: number }) => {
   const bug = BUGS[s.i];
 
   if (!bug) {

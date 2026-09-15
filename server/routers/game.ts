@@ -210,7 +210,7 @@ export const gameRouter = router({
           key: card.key,
           nextClue: card.nextClue ?? null,
           
-          view: card.view(res.state),
+          view: null,
         };
       }
 
@@ -227,7 +227,7 @@ export const gameRouter = router({
         key: null as null | { value: string; position: number },
         nextClue: null as string | null,
         
-        view: card.view(res.state),
+        view: null,
       };
     }),
 
