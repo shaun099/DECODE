@@ -160,12 +160,7 @@ export default function CardPage({ params }: { params: Promise<{ cardId: string 
         </p>
 
         <div className="flex gap-3">
-          <button onClick={() => router.replace('/play')}
-            className="flex-1 border-2 border-zinc-800 py-4 text-[12px] font-semibold uppercase
-                       tracking-[0.2em] text-zinc-400 transition-colors hover:border-zinc-600
-                       hover:text-zinc-100">
-            Not yet
-          </button>
+          
           <button onClick={() => start.mutate({ cardId })} disabled={start.isPending} autoFocus
             className="flex-1 border-2 border-emerald-600 bg-emerald-500/10 py-4 text-[12px]
                        font-bold uppercase tracking-[0.2em] text-emerald-300 transition-all
