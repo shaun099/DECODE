@@ -11,29 +11,30 @@ export const DOORS_L1 = 5;
 export const DOORS_L2 = 10;
 
 export const EASY: Question[] = [
-  { q: 'Which data structure follows LIFO?', options: ['Queue', 'Stack', 'Graph', 'Heap'], answer: 1 },
-  { q: 'What does CPU stand for?', options: ['Central Processing Unit', 'Computer Primary Utility', 'Core Program Unit', 'Central Program User'], answer: 0 },
-  { q: 'Which language is mainly used to style web pages?', options: ['HTML', 'CSS', 'SQL', 'C'], answer: 1 },
-  { q: 'Which SQL command is used to retrieve data?', options: ['GET', 'SELECT', 'FETCHROW', 'READ'], answer: 1 },
-  { q: 'Which data structure follows FIFO?', options: ['Stack', 'Queue', 'Tree', 'Array'], answer: 1 },
-  { q: 'What is the main purpose of an operating system?', options: ['Manage computer resources', 'Design websites', 'Compile only Java', 'Store only images'], answer: 0 },
-  { q: 'Which is a valid primary key property?', options: ['It can be duplicated', 'It uniquely identifies a row', 'It must be a password', 'It stores only text'], answer: 1 },
-  { q: 'What is an algorithm?', options: ['A programming language', 'A step-by-step solution to a problem', 'A database', 'A CPU register'], answer: 1 },
-  { q: 'Which protocol is commonly used for web pages?', options: ['HTTP', 'FTP only', 'SMTP only', 'BIOS'], answer: 0 },
-  { q: 'What does RAM provide?', options: ['Temporary working memory', 'Permanent optical storage', 'Internet access', 'Power supply'], answer: 0 },
+  { q: 'Which data structure follows LIFO?', options: ['Queue', 'Stack', 'Array', 'Tree'], answer: 1 },
+  { q: 'What does CPU stand for?', options: ['Central Processing Unit', 'Central Program Unit', 'Computer Processing Unit', 'Computer Program Unit'], answer: 0 },
+  { q: 'Which language is mainly used to style web pages?', options: ['HTML', 'CSS', 'JavaScript', 'SQL'], answer: 1 },
+  { q: 'Which SQL command is used to retrieve data?', options: ['GET', 'SELECT', 'FETCH', 'READ'], answer: 1 },
+  { q: 'Which data structure follows FIFO?', options: ['Stack', 'Queue', 'Array', 'Tree'], answer: 1 },
+  { q: 'What is the main purpose of an operating system?', options: ['Manage computer resources', 'Manage only files', 'Run only applications', 'Connect only to the internet'], answer: 0 },
+  { q: 'Which is a valid primary key property?', options: ['It can contain duplicate values', 'It uniquely identifies a row', 'It must contain numbers only', 'It stores passwords'], answer: 1 },
+  { q: 'What is an algorithm?', options: ['A programming language', 'A step-by-step method to solve a problem', 'A type of computer memory', 'A database table'], answer: 1 },
+  { q: 'Which protocol is commonly used to access websites?', options: ['HTTP', 'FTP', 'SMTP', 'DHCP'], answer: 0 },
+  { q: 'What does RAM mainly provide?', options: ['Temporary working memory', 'Permanent storage', 'Internet connection', 'Power to the CPU'], answer: 0 },
 ];
 
 export const HARD: Question[] = [
-  { q: 'What is the average-case time complexity of binary search on a sorted array?', options: ['O(1)', 'O(log n)', 'O(n)', 'O(n log n)'], answer: 1 },
-  { q: 'Which normal form removes partial dependency on a composite key?', options: ['1NF', '2NF', '3NF', 'BCNF'], answer: 1 },
-  { q: 'Which CPU scheduling algorithm can cause starvation?', options: ['FCFS', 'Round Robin', 'Priority Scheduling', 'FIFO disk scheduling'], answer: 2 },
-  { q: 'Which traversal of a BST visits keys in sorted order?', options: ['Preorder', 'Postorder', 'Inorder', 'Level order'], answer: 2 },
-  { q: 'Which protocol maps an IP address to a MAC address on a local network?', options: ['DNS', 'ARP', 'HTTP', 'DHCP'], answer: 1 },
-  { q: 'What does a page fault indicate?', options: ['A CPU overflow', 'A referenced page is not currently in physical memory', 'A database lock', 'A syntax error'], answer: 1 },
-  { q: 'Which compiler phase converts source code into tokens?', options: ['Lexical analysis', 'Code generation', 'Optimization', 'Linking'], answer: 0 },
-  { q: 'For a connected graph with n vertices, a spanning tree has how many edges?', options: ['n-1', 'n', 'n+1', '2n'], answer: 0 },
-  { q: 'Which ACID property ensures a transaction is all-or-nothing?', options: ['Consistency', 'Isolation', 'Atomicity', 'Durability'], answer: 2 },
-  { q: 'Which technique uses overlapping subproblems and optimal substructure?', options: ['Dynamic programming', 'Linear probing', 'Paging', 'Lexical analysis'], answer: 0 },
+
+  { q: 'Which search method works by repeatedly dividing a sorted list into two parts?', options: ['Linear Search', 'Binary Search', 'Bubble Sort', 'Selection Sort'], answer: 1 },
+  { q: 'Which data structure is commonly used to implement a waiting line?', options: ['Stack', 'Queue', 'Tree', 'Graph'], answer: 1 },
+  { q: 'Which traversal of a Binary Search Tree gives values in sorted order?', options: ['Preorder', 'Postorder', 'Inorder', 'Level Order'], answer: 2 },
+  { q: 'Which key is used to uniquely identify a row in a table?', options: ['Foreign Key', 'Primary Key', 'Candidate Key', 'Secondary Key'], answer: 1 },
+  { q: 'What is a page fault in an operating system?', options: ['A program crash', 'A required page is not in RAM', 'A CPU error', 'A disk failure'], answer: 1 },
+  { q: 'Which part of a compiler converts source code into tokens?', options: ['Parser', 'Lexical Analyzer', 'Code Generator', 'Optimizer'], answer: 1 },
+  { q: 'Which protocol is used to find a MAC address from an IP address?', options: ['DNS', 'ARP', 'HTTP', 'DHCP'], answer: 1 },
+  { q: 'A tree with 6 vertices has how many edges?', options: ['5', '6', '7', '12'], answer: 0 },
+  { q: 'Which OOP concept allows the same method to behave differently for different objects?', options: ['Encapsulation', 'Inheritance', 'Polymorphism', 'Abstraction'], answer: 2 },
+  { q: 'Which of these is an example of an operating system?', options: ['Chrome', 'Windows', 'MySQL', 'Python'], answer: 1 },
 ];
 
 const key = (r: number, c: number) => `${r},${c}`;

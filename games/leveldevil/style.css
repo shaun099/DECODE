@@ -1,0 +1,89 @@
+/* FableDevil menu and HUD styles, scoped to the card */
+
+#stage {
+  --bg: #0f1116;
+  --bg2: #181b23;
+  --stage: #0c0e13;
+  --fg: #ece8df;
+  --muted: #9a978e;
+  --line: rgba(236, 232, 223, 0.12);
+  --panel: rgba(24, 27, 35, 0.66);
+  --accent: #ffb24d;
+  --accent-press: #d98a26;
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+#stage .hidden { display: none !important; }
+
+#stage #hud {
+  position: absolute; inset: 0 0 auto 0;
+  display: flex; align-items: flex-start; justify-content: space-between;
+  padding: 14px 18px; pointer-events: none; font-weight: 700; z-index: 5;
+  color: var(--fg);
+}
+#stage .hud-left { display: flex; align-items: center; gap: 12px; }
+#stage .pill {
+  display: inline-grid; place-items: center; min-width: 30px; height: 30px;
+  padding: 0 8px; border-radius: 9px; background: var(--accent);
+  color: #16110a; font-weight: 800; font-size: 15px;
+}
+#stage #hud-levelname {
+  font-size: 15px; letter-spacing: .08em; text-transform: uppercase; opacity: .85;
+}
+#stage .hud-right { display: flex; align-items: center; gap: 8px; font-size: 15px; }
+#stage .hint {
+  margin-left: 10px; font-size: 11px; letter-spacing: .06em;
+  color: var(--muted); text-transform: uppercase;
+}
+
+#stage #menu, #stage #end-screen {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  z-index: 10; overflow: hidden;
+  background: radial-gradient(ellipse 90% 70% at 50% 18%, var(--bg2) 0%, var(--bg) 62%, var(--stage) 100%);
+}
+#stage .menu-inner {
+  width: 100%; height: 100%; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; padding: 4% 6%;
+  text-align: center; overflow-y: auto; color: var(--fg);
+}
+#stage .title {
+  margin: 4px 0 6px; font-size: clamp(30px, 6vw, 60px); font-weight: 900;
+  line-height: .95; display: flex; gap: 10px;
+}
+#stage .t-fable { color: var(--fg); }
+#stage .t-devil { color: var(--accent); }
+#stage .subtitle { margin: 0 0 22px; color: var(--muted); font-size: 15px; }
+
+#stage #play-btn, #stage #end-menu-btn {
+  font: inherit; font-size: 18px; font-weight: 800; letter-spacing: .08em;
+  color: #16110a; background: var(--accent); border: none; border-radius: 13px;
+  padding: 13px 46px; cursor: pointer; box-shadow: 0 8px 0 var(--accent-press);
+}
+#stage #play-btn:active, #stage #end-menu-btn:active {
+  transform: translateY(6px); box-shadow: 0 2px 0 var(--accent-press);
+}
+
+#stage .grid-label {
+  margin: 24px 0 10px; font-size: 11px; letter-spacing: .22em;
+  text-transform: uppercase; color: var(--muted);
+}
+#stage #level-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; width: 200px; }
+#stage #level-grid button {
+  aspect-ratio: 1; display: grid; place-items: center; font: inherit;
+  font-size: 15px; font-weight: 700; color: var(--fg); background: var(--panel);
+  border: 1px solid var(--line); border-radius: 9px; cursor: pointer;
+}
+#stage #level-grid button:disabled { opacity: .32; cursor: not-allowed; }
+#stage #level-grid button.done { background: var(--accent); border-color: var(--accent); color: #16110a; }
+
+#stage .menu-deaths { margin: 20px 0 4px; color: var(--muted); font-size: 13px; }
+#stage .controls-hint { margin: 4px 0 0; color: var(--muted); font-size: 12px; opacity: .7; }
+
+#stage .end-title {
+  font-size: clamp(34px, 7vw, 64px); font-weight: 900; line-height: .9;
+  margin: 0 0 10px; color: var(--accent);
+}
+#stage .end-sub { color: var(--muted); font-size: 17px; margin: 0 0 16px; }
+#stage .end-stats { font-size: 15px; max-width: 420px; margin: 0 0 24px; line-height: 1.5; }
+
+#stage canvas#game { display: block; background: var(--bg); border-radius: 10px; touch-action: none; }
