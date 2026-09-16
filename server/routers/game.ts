@@ -259,4 +259,17 @@ export const gameRouter = router({
       }
       return { ok };
     }),
+
+  logViolation: teamProcedure
+    .input(
+      z.object({
+        kind: z.enum(['tab_switch', 'window_blur', 'fullscreen_exit']),
+        detail: z.string().max(200).optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const t = await getTeam(ctx.teamId);
+      await log(ctx.teamId, input.kind, t.active_card ?? undefined, input.detail);
+      return { ok: true };
+    }),
 });

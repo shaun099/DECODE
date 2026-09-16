@@ -79,7 +79,6 @@ export default function Play() {
                 index={i}
                 data={{ name: c.name, hint: c.teaser, game: c.id }}
                 state={c.solved ? 'solved' : 'idle'}
-                onPlay={() => router.push(`/play/card/${c.id}`)}
                 onPlay={c.solved ? undefined : () => router.push(`/play/card/${c.id}`)}
               />
             ))}

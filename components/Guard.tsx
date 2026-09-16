@@ -2,11 +2,12 @@
 import { memo, useEffect, useRef, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import LockClock from '@/components/LockClock';
+import FullscreenGuard from '@/components/FullscreenGuard';
 import { trpc } from '@/lib/trpc';
 
 /** Children are memoised so a poll never rebuilds the game tree. */
 const Pass = memo(function Pass({ children }: { children: React.ReactNode }) {
-  return <>{children}</>;
+  return <FullscreenGuard>{children}</FullscreenGuard>;
 });
 
 export default function Guard({ children }: { children: React.ReactNode }) {

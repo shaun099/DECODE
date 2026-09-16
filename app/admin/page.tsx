@@ -170,6 +170,7 @@ export default function AdminPage() {
   const lockedCount = teams.filter((t) => t.status === 'locked').length;
   const finishedCount = teams.filter((t) => t.status === 'finished').length;
   const totalKeysDiscovered = teams.reduce((acc, t) => acc + t.keys, 0);
+  const totalTabSwitches = teams.reduce((acc, t) => acc + (t.tabSwitches || 0), 0);
 
   // Teams for comparison
   const teamA = teams.find((t) => t.id === compareA) || null;
@@ -377,7 +378,7 @@ export default function AdminPage() {
       {/* Main Content Area */}
       <main className="mx-auto max-w-7xl p-4 sm:p-6">
         {/* Metric Overview Cards */}
-        <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-5">
+        <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-6">
           <div className="rounded-xl border border-zinc-800 bg-zinc-900/60 p-3.5">
             <div className="flex items-center justify-between text-zinc-400">
               <span className="font-mono text-[11px] tracking-wider">TEAMS</span>
@@ -410,13 +411,23 @@ export default function AdminPage() {
             <p className="mt-1 font-mono text-2xl font-black text-yellow-300">{finishedCount}</p>
           </div>
 
-          <div className="col-span-2 sm:col-span-1 rounded-xl border border-emerald-900/40 bg-emerald-950/20 p-3.5">
+          <div className="rounded-xl border border-emerald-900/40 bg-emerald-950/20 p-3.5">
             <div className="flex items-center justify-between text-emerald-400">
               <span className="font-mono text-[11px] tracking-wider">KEYS WON</span>
               <Key className="h-4 w-4 text-emerald-400" />
             </div>
             <p className="mt-1 font-mono text-2xl font-black text-emerald-300">
               {totalKeysDiscovered} <span className="text-xs font-normal text-emerald-600">/ {totalTeams * 5}</span>
+            </p>
+          </div>
+
+          <div className={`rounded-xl border p-3.5 ${totalTabSwitches > 0 ? 'border-red-900/60 bg-red-950/30' : 'border-zinc-800 bg-zinc-900/60'}`}>
+            <div className="flex items-center justify-between text-zinc-400">
+              <span className="font-mono text-[11px] tracking-wider">TAB SWITCHES</span>
+              <AlertTriangle className={`h-4 w-4 ${totalTabSwitches > 0 ? 'text-red-400 animate-pulse' : 'text-zinc-600'}`} />
+            </div>
+            <p className={`mt-1 font-mono text-2xl font-black ${totalTabSwitches > 0 ? 'text-red-400' : 'text-zinc-400'}`}>
+              {totalTabSwitches}
             </p>
           </div>
         </div>
@@ -513,11 +524,20 @@ export default function AdminPage() {
 
                             {/* Team Name */}
                             <td className="px-3 py-3.5 font-bold text-zinc-100">
-                              <div className="flex items-center gap-2">
+                              <div className="flex flex-wrap items-center gap-2">
                                 <span className="text-sm font-semibold">{team.name}</span>
                                 {isFinished && (
                                   <span className="rounded bg-yellow-400/10 px-1.5 py-0.5 text-[10px] text-yellow-400 ring-1 ring-yellow-400/30">
                                     SOLVED
+                                  </span>
+                                )}
+                                {team.tabSwitches > 0 && (
+                                  <span
+                                    title={`${team.tabSwitches} tab switch(es), ${team.windowBlurs} window blur(s)`}
+                                    className="inline-flex items-center gap-1 rounded bg-red-500/20 px-1.5 py-0.5 text-[10px] font-bold text-red-300 ring-1 ring-red-500/40 animate-pulse"
+                                  >
+                                    <AlertTriangle className="h-3 w-3 text-red-400" />
+                                    {team.tabSwitches} {team.tabSwitches === 1 ? 'SWITCH' : 'SWITCHES'}
                                   </span>
                                 )}
                               </div>
@@ -719,6 +739,9 @@ export default function AdminPage() {
                   <option value="all">All Events</option>
                   <option value="key">🔑 Keys Only</option>
                   <option value="lock">🔒 Locks Only</option>
+                  <option value="tab_switch">⚠️ Tab Switches Only</option>
+                  <option value="window_blur">⚠️ Window Blurs Only</option>
+                  <option value="fullscreen_exit">⛶ Fullscreen Exits Only</option>
                   <option value="start">🎮 Tasks Started</option>
                   <option value="final_ok">🏁 Finishes</option>
                 </select>
@@ -797,6 +820,30 @@ export default function AdminPage() {
                           })}
                         </div>
                       </div>
+
+                      {/* Proctoring & Tab Switch Integrity Dossier */}
+                      <div className="mt-3 rounded-lg border border-zinc-800 bg-zinc-950/80 p-3">
+                        <div className="flex items-center justify-between text-xs font-mono mb-2">
+                          <span className="text-zinc-400">PROCTORING & TAB INTEGRITY</span>
+                          <span className={`font-bold ${selectedTeam.tabSwitches > 0 ? 'text-red-400 animate-pulse' : 'text-emerald-400'}`}>
+                            {selectedTeam.tabSwitches > 0 ? `⚠️ ${selectedTeam.tabSwitches} Tab Switch(es)` : '✓ Clean (0 Tab Switches)'}
+                          </span>
+                        </div>
+                        <div className="grid grid-cols-3 gap-2 font-mono text-xs">
+                          <div className={`rounded p-2 border ${selectedTeam.tabSwitches > 0 ? 'border-red-900/60 bg-red-950/40 text-red-300' : 'border-zinc-800 bg-zinc-900/40 text-zinc-400'}`}>
+                            <span className="text-[10px] text-zinc-500 block">TAB SWITCHES</span>
+                            <span className="text-sm font-black">{selectedTeam.tabSwitches || 0}</span>
+                          </div>
+                          <div className={`rounded p-2 border ${selectedTeam.windowBlurs > 0 ? 'border-amber-900/60 bg-amber-950/40 text-amber-300' : 'border-zinc-800 bg-zinc-900/40 text-zinc-400'}`}>
+                            <span className="text-[10px] text-zinc-500 block">WINDOW BLURS</span>
+                            <span className="text-sm font-black">{selectedTeam.windowBlurs || 0}</span>
+                          </div>
+                          <div className={`rounded p-2 border ${selectedTeam.fullscreenExits > 0 ? 'border-amber-900/60 bg-amber-950/40 text-amber-300' : 'border-zinc-800 bg-zinc-900/40 text-zinc-400'}`}>
+                            <span className="text-[10px] text-zinc-500 block">FULLSCREEN EXITS</span>
+                            <span className="text-sm font-black">{selectedTeam.fullscreenExits || 0}</span>
+                          </div>
+                        </div>
+                      </div>
                     </div>
 
                     {/* Chronological Event Log Timeline */}
@@ -821,12 +868,18 @@ export default function AdminPage() {
                             const isLock = log.kind === 'lock';
                             const isFinal = log.kind === 'final_ok' || log.kind === 'final_fail';
                             const isStart = log.kind === 'start';
+                            const isViolation =
+                              log.kind === 'tab_switch' ||
+                              log.kind === 'window_blur' ||
+                              log.kind === 'fullscreen_exit';
 
                             return (
                               <div
                                 key={log.id}
                                 className={`flex flex-col gap-1 rounded-lg border p-2.5 font-mono text-xs transition-colors ${
-                                  isKey
+                                  isViolation
+                                    ? 'border-red-500/60 bg-red-950/30 text-red-200'
+                                    : isKey
                                     ? 'border-emerald-500/40 bg-emerald-950/20 text-emerald-200'
                                     : isLock
                                     ? 'border-red-500/40 bg-red-950/20 text-red-200'
@@ -837,11 +890,28 @@ export default function AdminPage() {
                               >
                                 <div className="flex items-center justify-between">
                                   <span className="flex items-center gap-1.5 font-bold">
+                                    {isViolation && (
+                                      <AlertTriangle className="h-3.5 w-3.5 text-red-400 animate-pulse" />
+                                    )}
                                     {isKey && <Key className="h-3.5 w-3.5 text-emerald-400" />}
                                     {isLock && <Lock className="h-3.5 w-3.5 text-red-400" />}
                                     {isFinal && <Trophy className="h-3.5 w-3.5 text-yellow-400" />}
                                     {isStart && <Zap className="h-3.5 w-3.5 text-cyan-400" />}
-                                    <span className="uppercase">{log.kind.replace('_', ' ')}</span>
+                                    <span
+                                      className={
+                                        isViolation
+                                          ? 'uppercase text-red-400 font-black'
+                                          : 'uppercase'
+                                      }
+                                    >
+                                      {log.kind === 'tab_switch'
+                                        ? '⚠️ TAB SWITCH DETECTED'
+                                        : log.kind === 'window_blur'
+                                        ? '⚠️ WINDOW BLUR'
+                                        : log.kind === 'fullscreen_exit'
+                                        ? '⛶ FULLSCREEN EXITED'
+                                        : log.kind.replace('_', ' ')}
+                                    </span>
                                   </span>
                                   <span className="font-mono text-[11px] font-semibold text-zinc-400">
                                     {log.formattedTime}
@@ -910,38 +980,63 @@ export default function AdminPage() {
                       No matching events in the live stream.
                     </div>
                   ) : (
-                    filteredLogs.map((log) => (
-                      <div
-                        key={log.id}
-                        className="rounded-lg border border-zinc-800 bg-zinc-950/70 p-2.5 font-mono text-xs transition-colors hover:border-zinc-700"
-                      >
-                        <div className="flex items-center justify-between text-[11px]">
-                          <span className="font-bold text-emerald-400">{log.teamName}</span>
-                          <span className="text-zinc-500">{log.formattedTime}</span>
+                    filteredLogs.map((log) => {
+                      const isViolation =
+                        log.kind === 'tab_switch' ||
+                        log.kind === 'window_blur' ||
+                        log.kind === 'fullscreen_exit';
+
+                      return (
+                        <div
+                          key={log.id}
+                          className={`rounded-lg border p-2.5 font-mono text-xs transition-colors ${
+                            isViolation
+                              ? 'border-red-900/70 bg-red-950/40 text-red-200'
+                              : 'border-zinc-800 bg-zinc-950/70 hover:border-zinc-700'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between text-[11px]">
+                            <span
+                              className={`font-bold ${
+                                isViolation ? 'text-red-400' : 'text-emerald-400'
+                              }`}
+                            >
+                              {log.teamName}
+                            </span>
+                            <span className="text-zinc-500">{log.formattedTime}</span>
+                          </div>
+                          <div className="mt-1 flex items-center gap-2">
+                            <span
+                              className={`rounded px-1.5 py-0.5 text-[10px] font-bold ${
+                                isViolation
+                                  ? 'bg-red-500/30 text-red-300 border border-red-500/40'
+                                  : log.kind === 'key'
+                                  ? 'bg-emerald-500/20 text-emerald-300'
+                                  : log.kind === 'lock'
+                                  ? 'bg-red-500/20 text-red-300'
+                                  : log.kind === 'final_ok'
+                                  ? 'bg-yellow-500/20 text-yellow-300'
+                                  : 'bg-zinc-800 text-zinc-400'
+                              }`}
+                            >
+                              {log.kind === 'tab_switch'
+                                ? '⚠️ TAB SWITCH'
+                                : log.kind === 'window_blur'
+                                ? '⚠️ BLUR'
+                                : log.kind === 'fullscreen_exit'
+                                ? '⛶ FULLSCREEN EXIT'
+                                : log.kind}
+                            </span>
+                            <span className="text-zinc-300 text-[11px]">
+                              {log.cardName || log.cardId || log.detail || 'Action'}
+                            </span>
+                          </div>
+                          {log.detail && (
+                            <p className="mt-1 text-[10px] text-zinc-400">{log.detail}</p>
+                          )}
                         </div>
-                        <div className="mt-1 flex items-center gap-2">
-                          <span
-                            className={`rounded px-1.5 py-0.2 text-[10px] font-bold ${
-                              log.kind === 'key'
-                                ? 'bg-emerald-500/20 text-emerald-300'
-                                : log.kind === 'lock'
-                                ? 'bg-red-500/20 text-red-300'
-                                : log.kind === 'final_ok'
-                                ? 'bg-yellow-500/20 text-yellow-300'
-                                : 'bg-zinc-800 text-zinc-400'
-                            }`}
-                          >
-                            {log.kind}
-                          </span>
-                          <span className="text-zinc-300 text-[11px]">
-                            {log.cardName || log.cardId || log.detail || 'Action'}
-                          </span>
-                        </div>
-                        {log.detail && (
-                          <p className="mt-1 text-[10px] text-zinc-500">{log.detail}</p>
-                        )}
-                      </div>
-                    ))
+                      );
+                    })
                   )}
                 </div>
               </div>
