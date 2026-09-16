@@ -14,6 +14,7 @@ import { DECOY_IDS } from './decoys/ids';
 import LeetCodeGame from './leetcode/Game';
 import BlindcodeGame from './blindcode/Game';
 import MazeGame from './maze/Game';
+import OutputGame from './output/Game';
 
 export interface GameProps {
   hud: ReactNode;
@@ -34,6 +35,7 @@ const MAP: Record<string, ComponentType<GameProps>> = {
   captcha: CaptchaGame,
   blindcode: BlindcodeGame,
   maze: MazeGame,
+  output: OutputGame,
 };
 
 DECOY_IDS.forEach((id) => { MAP[id] = DecoyGame; });
