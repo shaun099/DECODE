@@ -7,7 +7,7 @@ import sudoku from '@/games/sudoku/card';
 import crossword from '@/games/crossword/card';
 import { DECOYS } from '@/games/decoys/card';
 import spot from '@/games/spot/card';
-import leetcode from '@/games/leetcode/card';
+import leetcode from '@/games/leveldevil/card';
 import password from '@/games/password/card';
 import captcha from '@/games/captcha/card';
 import maze from '@/games/maze/card';
