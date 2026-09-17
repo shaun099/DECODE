@@ -123,6 +123,13 @@ export default function AdminPage() {
     },
   });
 
+  const kickMutation = trpc.admin.kick.useMutation({
+    onSuccess: () => {
+      rankQuery.refetch();
+      logsQuery.refetch();
+    },
+  });
+
   const setPasswordMutation = trpc.admin.setPassword.useMutation({
     onSuccess: () => {
       eventQuery.refetch();
@@ -486,6 +493,7 @@ export default function AdminPage() {
                         const isSelected = selectedTeam?.id === team.id;
                         const isFinished = team.status === 'finished';
                         const isLocked = team.status === 'locked';
+                        const isPlaying = team.status === 'playing';
 
                         return (
                           <tr
@@ -657,6 +665,36 @@ export default function AdminPage() {
                                   <Unlock className="h-3 w-3" />
                                   UNLOCK
                                 </button>
+                              ) : isPlaying ? (
+                                <div className="flex items-center justify-center gap-1">
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      if (
+                                        confirm(
+                                          `Kick ${team.name} from ${team.activeCardName || team.activeCard}? They will be returned to the board.`
+                                        )
+                                      ) {
+                                        kickMutation.mutate({ pw, teamId: team.id });
+                                      }
+                                    }}
+                                    disabled={kickMutation.isPending}
+                                    className="inline-flex items-center gap-1 rounded bg-amber-500/20 px-2 py-1 text-[10px] font-bold text-amber-300 transition-colors hover:bg-amber-500 hover:text-black"
+                                  >
+                                    <LogOut className="h-3 w-3" />
+                                    KICK
+                                  </button>
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setSelectedTeamId(team.id);
+                                      setActiveTab('audit');
+                                    }}
+                                    className="rounded border border-zinc-700 bg-zinc-800/80 px-2 py-1 text-[10px] font-semibold text-zinc-300 hover:border-emerald-500 hover:text-emerald-300"
+                                  >
+                                    AUDIT
+                                  </button>
+                                </div>
                               ) : (
                                 <button
                                   onClick={(e) => {
@@ -770,16 +808,36 @@ export default function AdminPage() {
                           </p>
                         </div>
 
-                        {selectedTeam.status === 'locked' && (
-                          <button
-                            onClick={() => unlockMutation.mutate({ pw, teamId: selectedTeam.id })}
-                            disabled={unlockMutation.isPending}
-                            className="flex items-center gap-1 rounded bg-red-500 px-2.5 py-1 font-mono text-xs font-bold text-black hover:bg-red-400"
-                          >
-                            <Unlock className="h-3 w-3" />
-                            FORCE UNLOCK
-                          </button>
-                        )}
+                        <div className="flex items-center gap-2">
+                          {selectedTeam.status === 'locked' && (
+                            <button
+                              onClick={() => unlockMutation.mutate({ pw, teamId: selectedTeam.id })}
+                              disabled={unlockMutation.isPending}
+                              className="flex items-center gap-1 rounded bg-red-500 px-2.5 py-1 font-mono text-xs font-bold text-black hover:bg-red-400"
+                            >
+                              <Unlock className="h-3 w-3" />
+                              FORCE UNLOCK
+                            </button>
+                          )}
+                          {selectedTeam.status === 'playing' && (
+                            <button
+                              onClick={() => {
+                                if (
+                                  confirm(
+                                    `Kick ${selectedTeam.name} from ${selectedTeam.activeCardName || selectedTeam.activeCard}? They will be returned to the board.`
+                                  )
+                                ) {
+                                  kickMutation.mutate({ pw, teamId: selectedTeam.id });
+                                }
+                              }}
+                              disabled={kickMutation.isPending}
+                              className="flex items-center gap-1 rounded bg-amber-500 px-2.5 py-1 font-mono text-xs font-bold text-black hover:bg-amber-400 disabled:opacity-50"
+                            >
+                              <LogOut className="h-3 w-3" />
+                              KICK TO BOARD
+                            </button>
+                          )}
+                        </div>
                       </div>
 
                       {/* 5 Real Clue Keys Progress Bar */}

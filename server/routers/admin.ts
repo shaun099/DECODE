@@ -298,4 +298,18 @@ export const adminRouter = router({
       await log(input.teamId, 'admin_unlock', undefined, 'Lock cleared by administrator');
       return { ok: true };
     }),
+
+  kick: publicProcedure
+    .input(z.object({ pw: z.string(), teamId: z.string() }))
+    .mutation(async ({ input }) => {
+      guard(input.pw);
+      const { data: team } = await db.from('teams').select('active_card').eq('id', input.teamId).single();
+      if (!team?.active_card) {
+        throw new TRPCError({ code: 'BAD_REQUEST', message: 'Team is not in a task.' });
+      }
+      const cardId = team.active_card;
+      await db.from('teams').update({ active_card: null }).eq('id', input.teamId);
+      await log(input.teamId, 'admin_kick', cardId, 'Kicked from task by administrator — returned to board');
+      return { ok: true };
+    }),
 });
