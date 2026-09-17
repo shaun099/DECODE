@@ -1,5 +1,5 @@
 'use client';
-import { use, useState, useEffect } from 'react';
+import { use, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Guard from '@/components/Guard';
 import GameHud from '@/components/GameHud';
@@ -16,27 +16,6 @@ export default function CardPage({ params }: { params: Promise<{ cardId: string 
   const [done, setDone] = useState<{ key: any; nextClue: string | null } | null>(null);
 
   const brief = trpc.game.brief.useQuery({ cardId }, { retry: false });
-
-  // Poll for admin kick — if activeCard is cleared while we're on this card, go to board (/play).
-  // User explicitly wants /card (board) not /card/game_name, so we go to /play which is the board.
-  const kickedState = trpc.game.state.useQuery(undefined, {
-    refetchInterval: 800,
-    retry: false,
-    select: (d) => ({ activeCard: d.activeCard, lockedMs: d.lockedMs, finished: d.finished, expired: d.expired }),
-  });
-  useEffect(() => {
-    const s = kickedState.data;
-    if (!s || s.finished || s.expired) return;
-    // We are on /play/card/[cardId] and server says no active task → we were kicked
-    // Use hard replace to ensure we land on board (/play) not game's title/briefing
-    if (!s.activeCard) {
-      router.replace('/play');
-      // Fallback hard navigation in case Next router is stuck in game
-      setTimeout(() => {
-        if (window.location.pathname.startsWith('/play/card/')) window.location.replace('/play');
-      }, 400);
-    }
-  }, [kickedState.data, router]);
 
   const start = trpc.game.start.useMutation({ onSuccess: (d) => setSession(d) });
 
@@ -57,21 +36,14 @@ export default function CardPage({ params }: { params: Promise<{ cardId: string 
 
   /* ---------- locked out, straight from the attempt response ---------- */
   if (lockSec !== null) {
-    const adminOnly = lockSec > 86400;
     return (
       <div className="flex min-h-screen items-center justify-center px-4">
         <div className="max-w-md border-2 border-red-900 bg-black/60 px-10 py-10 text-center">
           <p className="text-xl font-black tracking-[0.2em] text-red-400">OUT OF ATTEMPTS</p>
           <p className="mt-4 text-sm leading-relaxed text-zinc-400">
-            This task has been reset to its beginning. No task can be opened until an admin clears it.
+            This task has been reset to its beginning. No task can be opened until this clears.
           </p>
-          {adminOnly ? (
-            <p className="mt-7 rounded-lg border border-amber-900/50 bg-amber-950/20 px-4 py-3 font-mono text-sm font-bold tracking-wide text-amber-300">
-              🔒 LOCKED — CONTACT ADMIN TO KICK/UNLOCK
-            </p>
-          ) : (
-            <LockClock seconds={lockSec} onComplete={() => router.replace('/play')} />
-          )}
+          <LockClock seconds={lockSec} onComplete={() => router.replace('/play')} />
           <p className="mt-6 font-mono text-[11px] tracking-[0.2em] text-zinc-600">
             THE THREE HOUR CLOCK KEEPS RUNNING
           </p>
