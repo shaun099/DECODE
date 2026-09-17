@@ -16,18 +16,15 @@ export default function Story() {
     <Guard>
       <div className="mx-auto flex h-screen max-w-2xl flex-col justify-center gap-6 px-6 py-8">
         <h1 className="font-mono text-3xl font-bold tracking-[0.25em] text-green-300">
-          THE BRIEFING
+          THE FIRST CLUE
         </h1>
 
         <div className="space-y-4 overflow-y-auto rounded-2xl border-2 border-green-500/40 bg-zinc-950 px-7 py-6">
-          <p className="font-mono text-[15px] leading-7 text-zinc-100">
-            [ your story goes here ]
-          </p>
-          <p className="font-mono text-[15px] leading-7 text-zinc-100">
-            Fifteen files sit on the board. Not all of them are real.
-          </p>
-          <p className="font-mono text-[15px] leading-7 text-green-200">
-            Begin with the one that asks ten questions and accepts nine.
+          <p className="whitespace-pre-line font-mono text-[15px] leading-7 text-green-200">
+            {`They never speak,
+yet somehow they stay in sync.
+Change one position,
+and the balance is lost`}
           </p>
         </div>
 
@@ -46,7 +43,6 @@ export default function Story() {
               anything. Ready?
             </p>
             <div className="mt-4 flex gap-3">
-              
               <button
                 onClick={() => begin.mutate()}
                 disabled={begin.isPending}
