@@ -129,9 +129,7 @@ export default function CardPage({ params }: { params: Promise<{ cardId: string 
                     <KeyRound className="h-4 w-4" />
                     FRAGMENT #{finalKey.position}
                   </span>
-                  <span className="rounded bg-lime-400/20 px-2 py-0.5 font-mono text-[11px] font-bold text-lime-300">
-                    SLOT {finalKey.position} / 5
-                  </span>
+                  
                 </div>
 
                 <div className="my-5 flex flex-col items-center justify-center gap-2">
@@ -142,23 +140,7 @@ export default function CardPage({ params }: { params: Promise<{ cardId: string 
                   </div>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={() => handleCopy(finalKey.value)}
-                  className="mx-auto flex items-center justify-center gap-2 rounded-lg border border-lime-400/40 bg-lime-500/10 px-4 py-2 font-mono text-xs font-semibold text-lime-300 transition-all hover:bg-lime-500 hover:text-black active:scale-95"
-                >
-                  {copied ? (
-                    <>
-                      <Check className="h-3.5 w-3.5 text-lime-400" />
-                      COPIED TO CLIPBOARD
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="h-3.5 w-3.5 text-lime-400" />
-                      COPY FRAGMENT VALUE
-                    </>
-                  )}
-                </button>
+                
               </div>
             )}
 
