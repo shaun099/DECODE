@@ -53,8 +53,8 @@ export default function MazeGame({ hud, view, send }: GameProps) {
       setActive(null);
       setPick(-1);
       setMsg({ text: 'Correct — door unlocked.', good: true });
+      setBusy(false);
     }
-    setBusy(false);
   }, [doors, active]);
 
   const isWall = useCallback(
@@ -95,21 +95,35 @@ export default function MazeGame({ hud, view, send }: GameProps) {
     return () => window.removeEventListener('keydown', onKey);
   }, [move]);
 
-  function submit() {
+  async function submit() {
     if (active === null || pick < 0 || busy) return;
-    const before = lives;
     setBusy(true);
-    send({ door: active, pick });
-    setTimeout(() => {
-      if (!doors[active]?.open) {
-        setMsg({
-          text: lives < before ? 'Incorrect — one life lost.' : 'Incorrect — one life lost.',
-          good: false,
-        });
+    setMsg(null);
+    try {
+      const res: any = await send({ door: active, pick });
+      if (res?.correct) {
+        // Correct — door will open via view update; the effect above will move the player
+        // Keep the success message (effect also sets it, but set here for instant feedback)
+        setMsg({ text: 'Correct — door unlocked.', good: true });
+        // busy will be cleared by the effect when doors[active].open becomes true
+        // Fallback clear in case view doesn't update quickly
+        setTimeout(() => setBusy(false), 1200);
+      } else {
+        // Wrong answer — server already decremented lives / reset if needed
+        // Check if we were locked/reset via done/locked or just lost a life
+        if (res?.locked || res?.done) {
+          setMsg({ text: 'No lives left — maze reset.', good: false });
+        } else {
+          setMsg({ text: 'Incorrect — one life lost.', good: false });
+        }
         setPick(-1);
         setBusy(false);
       }
-    }, 500);
+    } catch {
+      setMsg({ text: 'Incorrect — one life lost.', good: false });
+      setPick(-1);
+      setBusy(false);
+    }
   }
 
   const s = Math.ceil(msLeft / 1000);
