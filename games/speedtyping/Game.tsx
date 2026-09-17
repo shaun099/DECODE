@@ -21,7 +21,7 @@ export default function SpeedTypingGame({ hud, view, send }: GameProps) {
         <div className="flex flex-1 flex-col items-center justify-center rounded-xl border-2 border-emerald-600/50 bg-emerald-950/20 p-10 text-center">
           <p className="font-mono text-xs tracking-[0.2em] text-emerald-400">ALL LEVELS CLEARED</p>
           <h2 className="mt-3 text-3xl font-black text-emerald-100">Speed Demon</h2>
-          <p className="mt-2 text-sm text-zinc-400">All four sentences typed within their per-level limits (18–32s).</p>
+          <p className="mt-2 text-sm text-zinc-400">All four sentences typed within their per-level limits (25–40s).</p>
         </div>
       </div>
     );
@@ -233,10 +233,10 @@ export default function SpeedTypingGame({ hud, view, send }: GameProps) {
             TYPE EXACTLY — CASE & PUNCTUATION MATTER • {timeLimit / 1000} SECONDS
           </p>
           <p className="mt-1 text-sm text-zinc-500">
-            {currentLevel === 0 && 'Warm up. Simple sentence — 18s.'}
-            {currentLevel === 1 && 'Code snippet. Symbols matter — 22s.'}
-            {currentLevel === 2 && 'Longer sentence. Stay accurate — 27s.'}
-            {currentLevel === 3 && 'Final boss. Code + symbols — 32s. You got this.'}
+            {currentLevel === 0 && 'Warm up. Simple sentence — 25s.'}
+            {currentLevel === 1 && 'Code snippet. Symbols matter — 35s.'}
+            {currentLevel === 2 && 'Longer sentence. Stay accurate — 40s.'}
+            {currentLevel === 3 && 'Final boss. Code + symbols — 40s. You got this.'}
           </p>
         </div>
 
@@ -309,7 +309,7 @@ export default function SpeedTypingGame({ hud, view, send }: GameProps) {
         </div>
 
         <p className="shrink-0 text-center font-mono text-[11px] leading-relaxed tracking-wide text-zinc-600">
-          Tip: Time scales with complexity (18→22→27→32s). Hard but not brutal — aim for ~30 WPM. Punctuation must match exactly.
+          Tip: Time scales with complexity (25→35→40→40s). Hard but not brutal — aim for ~25 WPM. Punctuation must match exactly.
         </p>
       </div>
     </div>
