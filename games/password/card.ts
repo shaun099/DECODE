@@ -11,7 +11,7 @@ const card: CardModule = {
     id: 'password',
     real: false,
     name: 'The Open Door',
-    teaser: 'A company website that says more than it means to.',
+   // teaser: 'A company website that says more than it means to.',
     rules: [
         'A four-part password is hidden across the pages of a company website.',
         'Read every page. The answers are in the text, never stated as answers.',

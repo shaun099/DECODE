@@ -13,7 +13,7 @@ const card: CardModule = {
   id: 'quiz',
   real: false,
   name: 'The Examiner',
-  teaser: 'It asks. It does not repeat itself.',
+  //teaser: 'It asks. It does not repeat itself.',
   rules: [
     `${PER_ROUND} questions drawn at random. ${PASS} correct to pass.`,
     'A wrong answer moves you on. It does not end the round.',

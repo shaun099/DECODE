@@ -33,7 +33,7 @@ const card: CardModule = {
   id: 'maze',
   real: true,
   name: 'The Long Corridor',
-  teaser: 'Every locked door wants an answer before it opens.',
+ // teaser: 'Every locked door wants an answer before it opens.',
   rules: [
     'Two mazes. Five locked doors in the first, ten in the second.',
     'Move with the arrow keys or WASD.',

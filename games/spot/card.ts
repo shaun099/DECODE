@@ -8,7 +8,7 @@ const card: CardModule = {
   id: 'spot',
   real: true,
   name: 'The Observatory',
-  teaser: 'Two scenes. Ten differences. Your eyes are the only tool.',
+  //teaser: 'Two scenes. Ten differences. Your eyes are the only tool.',
   rules: [
     `Two versions of the same scene, with ${TOTAL} differences between them.`,
     'The differences are small — a bead, a tick mark, a single wrap of twine.',

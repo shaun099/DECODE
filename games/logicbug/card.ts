@@ -5,7 +5,6 @@ const card: CardModule = {
   id: 'logicbug',
   real: false,
   name: 'The Polite Liar',
-  teaser: 'Programs that run perfectly and answer wrongly.',
   rules: [
     `${BUGS.length} Python programs. Every one runs. Every one is wrong.`,
     'Read the brief first — it says what the program should do.',

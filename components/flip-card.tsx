@@ -101,14 +101,13 @@ export function FlipCard({
         >
           {/* Details Content */}
           <div className="relative z-10 my-auto flex flex-col items-center justify-center text-center px-1 pt-2">
-            <h3 className="text-base sm:text-lg md:text-xl font-black uppercase tracking-wide text-emerald-950 leading-tight">
-              {data.name}
-            </h3>
-            <div className="my-2.5 h-0.5 w-14 bg-emerald-800/40 rounded-full" />
-            <p className="font-mono text-xs sm:text-[13px] leading-relaxed text-emerald-950 font-bold line-clamp-4">
-              {data.hint}
-            </p>
-          </div>
+  <h3 className="text-base sm:text-lg md:text-xl font-black uppercase tracking-wide text-emerald-950 leading-tight">
+    {data.name}
+  </h3>
+  <p className="mt-2.5 font-mono text-xs sm:text-[13px] leading-relaxed text-emerald-950 font-bold line-clamp-4">
+    {data.hint}
+  </p>
+</div>
 
           {/* Action Button: Button.png */}
           <div className="relative z-10 pb-1 flex justify-center">

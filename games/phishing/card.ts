@@ -7,7 +7,7 @@ const card: CardModule = {
   id: 'phishing',
   real: false,
   name: 'The Honest Letter',
-  teaser: 'Five messages. Every one is lying about something small.',
+  //teaser: 'Five messages. Every one is lying about something small.',
   rules: [
     `${EMAILS.length} messages, one at a time.`,
     'Each hides one or two details that give it away.',
