@@ -11,7 +11,7 @@ export default function BlindcodeGame({ hud, view, send }: GameProps) {
   const testResults = view?.testResults ?? [];
   const solvedCode = view?.solvedCode;
 
-  const [language, setLanguage] = useState<'javascript' | 'python'>('javascript');
+  const [language, setLanguage] = useState<'javascript' | 'python' | 'c'>('javascript');
   const [code, setCode] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [outputLog, setOutputLog] = useState<{
@@ -33,7 +33,12 @@ export default function BlindcodeGame({ hud, view, send }: GameProps) {
   // Initialize or reset starter template when problem changes or language changes
   useEffect(() => {
     if (problem?.starterCode) {
-      const template = language === 'python' ? problem.starterCode.python : problem.starterCode.js;
+      const template =
+        language === 'c'
+          ? problem.starterCode.c
+          : language === 'python'
+            ? problem.starterCode.python
+            : problem.starterCode.js;
       setCode(template);
       setOutputLog({
         success: null,
@@ -104,7 +109,12 @@ export default function BlindcodeGame({ hud, view, send }: GameProps) {
 
   const handleReset = () => {
     if (problem?.starterCode) {
-      const template = language === 'python' ? problem.starterCode.python : problem.starterCode.js;
+      const template =
+        language === 'c'
+          ? problem.starterCode.c
+          : language === 'python'
+            ? problem.starterCode.python
+            : problem.starterCode.js;
       setCode(template);
       setOutputLog({
         success: null,
@@ -168,14 +178,6 @@ export default function BlindcodeGame({ hud, view, send }: GameProps) {
   const codeLines = (code || '').split('\n');
   const lineCount = Math.max(codeLines.length, 8);
 
-  // Generate masked visual lines for blind preview
-  const maskedLines = codeLines.map((line) => {
-    return line
-      .split('')
-      .map((ch) => (ch === ' ' ? ' ' : ch === '\t' ? '  ' : '•'))
-      .join('');
-  });
-
   return (
     <div className="mx-auto flex h-screen max-w-6xl flex-col gap-4 overflow-hidden px-4 py-4 sm:px-6">
       {/* Top HUD */}
@@ -186,32 +188,42 @@ export default function BlindcodeGame({ hud, view, send }: GameProps) {
         {/* Left Column: Problem Briefing & Output Console */}
         <div className="flex min-h-0 flex-col gap-4 lg:col-span-5">
           {/* Problem Card */}
-          <div className="flex flex-col rounded-lg border-2 border-emerald-900/60 bg-black/60 p-4 backdrop-blur-sm">
+          <div className="flex flex-col rounded-2xl border-2 border-lime-500/70 bg-black/70 p-4 shadow-lg backdrop-blur-md">
             <div className="mb-2 flex items-center justify-between">
-              <span className="inline-flex items-center gap-1.5 rounded border border-emerald-600/40 bg-emerald-950/40 px-2 py-0.5 font-mono text-[11px] font-bold text-emerald-400">
+              <span className="inline-flex items-center gap-1.5 rounded-md border border-lime-500/40 bg-lime-950/40 px-2.5 py-0.5 font-mono text-[11px] font-bold text-lime-400">
                 <Code2 className="h-3.5 w-3.5" />
                 BLIND CODING CHALLENGE
               </span>
-              <span className="font-mono text-[11px] text-zinc-500">
+              <span className="font-mono text-[11px] font-semibold text-lime-300/80">
                 {problem?.difficulty || 'Easy'}
               </span>
             </div>
 
-            <h2 className="text-lg font-bold text-zinc-100">{problem?.title || 'Coding Challenge'}</h2>
+            <h2 className="font-mono text-lg font-bold text-zinc-100">{problem?.title || 'Coding Challenge'}</h2>
             <p className="mt-1.5 text-sm leading-relaxed text-zinc-300">{problem?.description}</p>
+
+            {/* Target Function Indicator */}
+            {problem?.functionName && (
+              <div className="mt-2.5 flex items-center gap-2 rounded-lg bg-lime-950/30 border border-lime-500/30 px-3 py-1.5 font-mono text-xs">
+                <span className="text-lime-400 font-semibold">Target Function:</span>
+                <code className="text-lime-200 font-bold">
+                  {problem.functionName[language === 'c' ? 'c' : language === 'python' ? 'python' : 'js']}
+                </code>
+              </div>
+            )}
 
             {/* Examples */}
             {problem?.examples && problem.examples.length > 0 && (
               <div className="mt-3 space-y-1.5 border-t border-zinc-800/80 pt-2.5">
-                <p className="font-mono text-[11px] font-semibold text-emerald-400">EXAMPLES:</p>
+                <p className="font-mono text-[11px] font-semibold text-lime-400">EXAMPLES:</p>
                 <div className="space-y-1 font-mono text-xs">
                   {problem.examples.map((ex: any, idx: number) => (
                     <div
                       key={idx}
-                      className="flex items-center justify-between rounded bg-zinc-950/70 px-2.5 py-1 text-zinc-300 border border-zinc-800/50"
+                      className="flex items-center justify-between rounded-lg bg-zinc-950/80 px-2.5 py-1.5 text-zinc-300 border border-lime-500/20"
                     >
                       <span className="text-zinc-400">{ex.input}</span>
-                      <span className="text-emerald-300">➜ {ex.output}</span>
+                      <span className="text-lime-300 font-bold">➜ {ex.output}</span>
                     </div>
                   ))}
                 </div>
@@ -220,16 +232,16 @@ export default function BlindcodeGame({ hud, view, send }: GameProps) {
           </div>
 
           {/* Terminal / Output Console */}
-          <div className="flex min-h-0 flex-1 flex-col rounded-lg border-2 border-zinc-800 bg-zinc-950 p-3 shadow-inner">
-            <div className="mb-2 flex items-center justify-between border-b border-zinc-800 pb-2">
+          <div className="flex min-h-0 flex-1 flex-col rounded-2xl border-2 border-lime-500/70 bg-black/75 p-3.5 shadow-lg backdrop-blur-md">
+            <div className="mb-2 flex items-center justify-between border-b border-lime-500/30 pb-2">
               <div className="flex items-center gap-2">
-                <Terminal className="h-4 w-4 text-emerald-400" />
-                <span className="font-mono text-xs font-bold tracking-wider text-zinc-300">
+                <Terminal className="h-4 w-4 text-lime-400" />
+                <span className="font-mono text-xs font-bold tracking-wider text-zinc-200">
                   EXECUTION CONSOLE
                 </span>
               </div>
               {outputLog.success === true ? (
-                <span className="flex items-center gap-1 font-mono text-xs font-bold text-emerald-400">
+                <span className="flex items-center gap-1 font-mono text-xs font-bold text-lime-400">
                   <CheckCircle2 className="h-3.5 w-3.5" /> ACCEPTED
                 </span>
               ) : outputLog.success === false ? (
@@ -243,21 +255,21 @@ export default function BlindcodeGame({ hud, view, send }: GameProps) {
 
             <div className="min-h-0 flex-1 overflow-y-auto font-mono text-xs leading-relaxed">
               {isSubmitting ? (
-                <div className="flex items-center gap-2 text-emerald-400">
-                  <span className="h-2 w-2 animate-ping rounded-full bg-emerald-400" />
+                <div className="flex items-center gap-2 text-lime-400">
+                  <span className="h-2 w-2 animate-ping rounded-full bg-lime-400" />
                   <span>Running code against test suite...</span>
                 </div>
               ) : outputLog.success === true ? (
-                <div className="space-y-2 text-emerald-300">
-                  <p className="font-bold text-emerald-400">✓ {outputLog.message}</p>
+                <div className="space-y-2 text-lime-300">
+                  <p className="font-bold text-lime-400">✓ {outputLog.message}</p>
                   {outputLog.testResults && outputLog.testResults.length > 0 && (
-                    <div className="space-y-1 border-t border-emerald-900/60 pt-2 text-zinc-300">
+                    <div className="space-y-1 border-t border-lime-900/60 pt-2 text-zinc-300">
                       {outputLog.testResults.map((tr: any, idx: number) => (
                         <div key={idx} className="flex items-center gap-2 text-[11px]">
-                          <span className="text-emerald-400">✓</span>
+                          <span className="text-lime-400">✓</span>
                           <span>Test {idx + 1}:</span>
                           <span className="text-zinc-400">Input: {tr.input}</span>
-                          <span className="text-emerald-400">➜ {tr.actual}</span>
+                          <span className="text-lime-400 font-bold">➜ {tr.actual}</span>
                         </div>
                       ))}
                     </div>
@@ -268,7 +280,7 @@ export default function BlindcodeGame({ hud, view, send }: GameProps) {
                 </div>
               ) : outputLog.error ? (
                 <div className="space-y-2 text-red-300">
-                  <div className="rounded border border-red-900/60 bg-red-950/30 p-2.5">
+                  <div className="rounded-lg border border-red-900/60 bg-red-950/30 p-2.5">
                     <p className="font-bold text-red-400">EXECUTION ERROR:</p>
                     <pre className="mt-1 whitespace-pre-wrap text-[11px] text-red-200">
                       {outputLog.error}
@@ -278,12 +290,12 @@ export default function BlindcodeGame({ hud, view, send }: GameProps) {
                     <div className="space-y-1 text-zinc-400 text-[11px]">
                       {outputLog.testResults.map((tr: any, idx: number) => (
                         <div key={idx} className="flex items-center gap-2">
-                          <span className={tr.passed ? 'text-emerald-400' : 'text-red-400'}>
+                          <span className={tr.passed ? 'text-lime-400' : 'text-red-400'}>
                             {tr.passed ? '✓' : '✗'}
                           </span>
                           <span>Test {idx + 1}:</span>
                           <span>Input: {tr.input}</span>
-                          <span className={tr.passed ? 'text-emerald-400' : 'text-red-400'}>
+                          <span className={tr.passed ? 'text-lime-400' : 'text-red-400'}>
                             Expected: {tr.expected}, Got: {tr.actual}
                           </span>
                         </div>
@@ -292,10 +304,10 @@ export default function BlindcodeGame({ hud, view, send }: GameProps) {
                   )}
                 </div>
               ) : (
-                <div className="text-zinc-600">
+                <div className="text-zinc-500">
                   <p>&gt; Blind Code Engine initialized.</p>
-                  <p>&gt; Choose language, write your function blindly, and click Run.</p>
-                  <p>&gt; Keystrokes are masked during typing.</p>
+                  <p>&gt; Choose language, write your function, and click Run &amp; Submit.</p>
+                  <p>&gt; Code display is blurred until successfully verified.</p>
                 </div>
               )}
             </div>
@@ -303,17 +315,17 @@ export default function BlindcodeGame({ hud, view, send }: GameProps) {
         </div>
 
         {/* Right Column: Blind Code Editor */}
-        <div className="flex min-h-0 flex-col rounded-lg border-2 border-emerald-900/70 bg-black/70 p-4 shadow-xl backdrop-blur-md lg:col-span-7">
+        <div className="flex min-h-0 flex-col rounded-2xl border-2 border-lime-500/70 bg-black/75 p-4 shadow-xl backdrop-blur-md lg:col-span-7">
           {/* Header with Language Selector & Blind Status */}
-          <div className="mb-3 flex flex-wrap items-center justify-between gap-2 border-b border-zinc-800 pb-3">
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-2 border-b border-lime-500/30 pb-3">
             {/* Language Switcher */}
-            <div className="flex items-center gap-1 rounded bg-zinc-950 p-1 border border-zinc-800">
+            <div className="flex items-center gap-1 rounded-xl bg-zinc-950 p-1 border border-zinc-800">
               <button
                 type="button"
                 onClick={() => setLanguage('javascript')}
-                className={`rounded px-3 py-1 font-mono text-xs font-bold transition-colors ${
+                className={`rounded-lg px-3 py-1 font-mono text-xs font-bold transition-colors ${
                   language === 'javascript'
-                    ? 'bg-emerald-500 text-black shadow'
+                    ? 'bg-lime-400 text-black shadow'
                     : 'text-zinc-400 hover:text-zinc-200'
                 }`}
               >
@@ -322,32 +334,43 @@ export default function BlindcodeGame({ hud, view, send }: GameProps) {
               <button
                 type="button"
                 onClick={() => setLanguage('python')}
-                className={`rounded px-3 py-1 font-mono text-xs font-bold transition-colors ${
+                className={`rounded-lg px-3 py-1 font-mono text-xs font-bold transition-colors ${
                   language === 'python'
-                    ? 'bg-emerald-500 text-black shadow'
+                    ? 'bg-lime-400 text-black shadow'
                     : 'text-zinc-400 hover:text-zinc-200'
                 }`}
               >
                 Python
+              </button>
+              <button
+                type="button"
+                onClick={() => setLanguage('c')}
+                className={`rounded-lg px-3 py-1 font-mono text-xs font-bold transition-colors ${
+                  language === 'c'
+                    ? 'bg-lime-400 text-black shadow'
+                    : 'text-zinc-400 hover:text-zinc-200'
+                }`}
+              >
+                C
               </button>
             </div>
 
             {/* Blind Mode Badge */}
             <div className="flex items-center gap-2">
               <span
-                className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 font-mono text-[11px] font-bold ${
+                className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 font-mono text-[11px] font-bold ${
                   revealCode
-                    ? 'bg-emerald-950 text-emerald-300 border border-emerald-600/40'
-                    : 'bg-red-950/60 text-red-400 border border-red-800/50'
+                    ? 'bg-lime-950/80 text-lime-300 border border-lime-500/50 shadow-[0_0_10px_rgba(132,204,22,0.3)]'
+                    : 'bg-amber-950/60 text-amber-300 border border-amber-500/50'
                 }`}
               >
                 {revealCode ? (
                   <>
-                    <Eye className="h-3 w-3" /> REVEALED
+                    <Eye className="h-3.5 w-3.5" /> REVEALED
                   </>
                 ) : (
                   <>
-                    <EyeOff className="h-3 w-3 animate-pulse" /> BLIND MODE: MASKED
+                    <EyeOff className="h-3.5 w-3.5 animate-pulse" /> BLIND MODE: BLURRED
                   </>
                 )}
               </span>
@@ -355,17 +378,17 @@ export default function BlindcodeGame({ hud, view, send }: GameProps) {
               <button
                 type="button"
                 onClick={handleReset}
-                title="Reset code template"
-                className="flex items-center gap-1 rounded border border-zinc-800 bg-zinc-900/60 px-2 py-1 font-mono text-xs text-zinc-400 hover:border-zinc-600 hover:text-zinc-200"
+                title="Reset code editor"
+                className="flex items-center gap-1 rounded-lg border border-zinc-800 bg-zinc-900/70 px-2.5 py-1 font-mono text-xs text-zinc-400 hover:border-zinc-600 hover:text-zinc-200"
               >
                 <RotateCcw className="h-3 w-3" />
-                Reset
+                Clear
               </button>
             </div>
           </div>
 
           {/* Editor Area */}
-          <div className="relative flex min-h-0 flex-1 rounded border border-zinc-800 bg-zinc-950/90 font-mono text-sm overflow-hidden">
+          <div className="relative flex min-h-0 flex-1 rounded-xl border border-lime-500/30 bg-zinc-950/90 font-mono text-sm overflow-hidden">
             {/* Line Number Gutter */}
             <div className="w-12 select-none border-r border-zinc-800/80 bg-zinc-950 py-3 pr-2 text-right font-mono text-xs text-zinc-600">
               {Array.from({ length: lineCount }).map((_, i) => (
@@ -375,12 +398,12 @@ export default function BlindcodeGame({ hud, view, send }: GameProps) {
               ))}
             </div>
 
-            {/* Code Input & Display Area */}
+            {/* Code Input & Display Area with CSS Blur */}
             <div className="relative flex-1 overflow-auto p-3">
-              {/* Actual Textarea (invisible/masked text in blind mode) */}
               <textarea
                 ref={textareaRef}
                 value={code}
+                placeholder="Type your function here..."
                 onChange={(e) => {
                   setCode(e.target.value);
                   updateCursorPosition();
@@ -393,65 +416,46 @@ export default function BlindcodeGame({ hud, view, send }: GameProps) {
                 autoComplete="off"
                 autoCorrect="off"
                 disabled={outputLog.success === true}
-                className={`h-full w-full resize-none bg-transparent font-mono text-sm leading-6 outline-none ${
-                  revealCode
-                    ? 'text-emerald-300 selection:bg-emerald-500/30'
-                    : 'text-transparent caret-emerald-400 selection:bg-emerald-500/20'
+                className={`h-full w-full resize-none bg-transparent font-mono text-sm leading-6 outline-none text-emerald-300 caret-lime-400 placeholder:text-zinc-600 selection:bg-lime-500/30 transition-all duration-300 ${
+                  revealCode ? 'filter-none select-text' : 'select-none'
                 }`}
-                style={
-                  !revealCode
-                    ? ({
-                        WebkitTextSecurity: 'disc',
-                      } as any)
-                    : {}
-                }
+                style={{
+                  filter: revealCode ? 'none' : 'blur(5.5px)',
+                  userSelect: revealCode ? 'text' : 'none',
+                }}
               />
-
-              {/* Masked Overlay (when blind mode is active and not revealed) */}
-              {!revealCode && (
-                <div
-                  aria-hidden="true"
-                  className="pointer-events-none absolute inset-0 p-3 font-mono text-sm leading-6 text-zinc-500 select-none overflow-hidden"
-                >
-                  {maskedLines.map((mLine, i) => (
-                    <div key={i} className="whitespace-pre">
-                      {mLine || ' '}
-                    </div>
-                  ))}
-                </div>
-              )}
             </div>
           </div>
 
           {/* Bottom Bar: Stats & Submit Button */}
-          <div className="mt-3 flex flex-wrap items-center justify-between gap-3 border-t border-zinc-800 pt-3">
+          <div className="mt-3 flex flex-wrap items-center justify-between gap-3 border-t border-lime-500/30 pt-3">
             <div className="font-mono text-xs text-zinc-500">
               <span>Ln {cursorPos.line}, Col {cursorPos.col}</span>
               <span className="mx-2">&bull;</span>
               <span>{code.length} chars</span>
               <span className="mx-2">&bull;</span>
-              <span className="text-zinc-600">Press Ctrl+Enter to submit</span>
+              <span className="text-zinc-400">Ctrl+Enter to run</span>
             </div>
 
             <button
               type="button"
               onClick={handleSubmit}
               disabled={isSubmitting || outputLog.success === true}
-              className={`flex items-center gap-2 rounded-lg px-6 py-2.5 font-mono text-xs font-bold uppercase tracking-wider transition-all ${
+              className={`flex items-center gap-2 rounded-xl px-6 py-2.5 font-mono text-xs font-bold uppercase tracking-wider transition-all shadow-[0_0_15px_rgba(132,204,22,0.15)] ${
                 outputLog.success === true
-                  ? 'border-2 border-emerald-500 bg-emerald-500/20 text-emerald-300 cursor-default'
-                  : 'border-2 border-emerald-500 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500 hover:text-black active:scale-95 disabled:opacity-50'
+                  ? 'border-2 border-lime-400 bg-lime-500/20 text-lime-300 cursor-default shadow-[0_0_20px_rgba(132,204,22,0.4)]'
+                  : 'border-2 border-lime-500 bg-lime-500/10 text-lime-300 hover:bg-lime-400 hover:text-black active:scale-95 disabled:opacity-50'
               }`}
             >
               {isSubmitting ? (
                 <>
-                  <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-emerald-400 border-t-transparent" />
+                  <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-lime-400 border-t-transparent" />
                   Testing...
                 </>
               ) : outputLog.success === true ? (
                 <>
-                  <CheckCircle2 className="h-4 w-4" />
-                  Solved
+                  <CheckCircle2 className="h-4 w-4 text-lime-400" />
+                  Accepted
                 </>
               ) : (
                 <>

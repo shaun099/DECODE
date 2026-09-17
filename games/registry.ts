@@ -13,6 +13,7 @@ import BlindcodeGame from './blindcode/Game';
 import MazeGame from './maze/Game';
 import SpeedTypingGame from './speedtyping/Game';
 import DecoyGame from './decoys/Game';
+import MemoryGame from './memory/Game';
 import { DECOY_IDS } from './decoys/ids';
 
 export interface GameProps {
@@ -34,6 +35,7 @@ const MAP: Record<string, ComponentType<GameProps>> = {
   blindcode: BlindcodeGame,
   maze: MazeGame,
   speedtyping: SpeedTypingGame,
+  memory: MemoryGame,
 };
 
 DECOY_IDS.forEach((id) => { MAP[id] = DecoyGame; });

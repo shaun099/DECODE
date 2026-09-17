@@ -1,16 +1,16 @@
 import type { CardModule } from '@/server/cards/types';
 import { PROBLEMS } from './logic';
-import { runJavaScript, runPython } from './runner';
+import { runJavaScript, runPython, runC } from './runner';
 
 const card: CardModule = {
   id: 'blindcode',
   real: false,
   name: 'The Dark Terminal',
-  teaser: 'Write functioning code in total darkness. You cannot see what you type.',
+  teaser: 'Write functioning code in a blurred terminal. The code unblurs once all tests pass.',
   rules: [
     'A coding challenge is presented.',
-    'Choose your language: JavaScript or Python.',
-    'Type your code in the dark — your keystrokes are masked.',
+    'Choose your language: JavaScript, Python, or C.',
+    'Type your code in the blurred editor — the text remains blurred until verified.',
     'Execution errors and test failures will appear in the output console.',
     'Four failed submissions and your terminal locks for one minute.',
     'You cannot leave once you begin.',
@@ -48,15 +48,22 @@ const card: CardModule = {
     };
   },
 
-  attempt: async (s, p: { code: string; language: 'javascript' | 'python' }) => {
+  attempt: async (s, p: { code: string; language: 'javascript' | 'python' | 'c' }) => {
     const currentProblem = PROBLEMS[s.i % PROBLEMS.length];
-    const lang = p.language === 'python' ? 'python' : 'javascript';
-    const fnName = currentProblem.functionName[lang === 'python' ? 'python' : 'js'];
+    const lang = p.language === 'c' ? 'c' : p.language === 'python' ? 'python' : 'javascript';
+    const fnName =
+      lang === 'c'
+        ? currentProblem.functionName.c
+        : lang === 'python'
+          ? currentProblem.functionName.python
+          : currentProblem.functionName.js;
 
     const execRes =
-      lang === 'python'
-        ? await runPython(p.code || '', fnName, currentProblem.testCases)
-        : await runJavaScript(p.code || '', fnName, currentProblem.testCases);
+      lang === 'c'
+        ? await runC(p.code || '', currentProblem.id, fnName, currentProblem.testCases)
+        : lang === 'python'
+          ? await runPython(p.code || '', fnName, currentProblem.testCases)
+          : await runJavaScript(p.code || '', fnName, currentProblem.testCases);
 
     if (!execRes.success) {
       return {

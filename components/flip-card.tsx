@@ -27,8 +27,8 @@ export function FlipCard({
   const solved = state === 'solved';
 
   const variants = {
-    front: { rotateY: 0, transition: { duration: 0.6, ease: easeOut } },
-    back: { rotateY: 180, transition: { duration: 0.6, ease: easeOut } },
+    front: { rotateY: 0, transition: { duration: 0.1, ease: easeOut } },
+    back: { rotateY: 180, transition: { duration: 0.1, ease: easeOut } },
   };
 
   const shell =

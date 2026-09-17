@@ -6,10 +6,12 @@ export interface CodingProblem {
   functionName: {
     js: string;
     python: string;
+    c: string;
   };
   starterCode: {
     js: string;
     python: string;
+    c: string;
   };
   examples: {
     input: string;
@@ -26,15 +28,17 @@ export const PROBLEMS: CodingProblem[] = [
   {
     id: 'square',
     title: 'Square of a Number',
-    description: 'Write a function that takes a number n and returns its square (n * n).',
+    description: "Write a function named 'square' that accepts a number n and returns its square (n * n).",
     difficulty: 'Easy',
     functionName: {
       js: 'square',
       python: 'square',
+      c: 'square',
     },
     starterCode: {
-      js: 'function square(n) {\n  return n * n;\n}',
-      python: 'def square(n):\n    return n * n',
+      js: '',
+      python: '',
+      c: '',
     },
     examples: [
       { input: 'n = 5', output: '25' },
@@ -52,15 +56,17 @@ export const PROBLEMS: CodingProblem[] = [
   {
     id: 'reverse_string',
     title: 'Reverse a String',
-    description: 'Write a function that takes a string s and returns the reversed string.',
+    description: "Write a function named 'reverseString' in JavaScript (or 'reverse_string' in Python/C) that accepts a string s and returns the reversed string.",
     difficulty: 'Easy',
     functionName: {
       js: 'reverseString',
       python: 'reverse_string',
+      c: 'reverse_string',
     },
     starterCode: {
-      js: 'function reverseString(s) {\n  return s.split("").reverse().join("");\n}',
-      python: 'def reverse_string(s):\n    return s[::-1]',
+      js: '',
+      python: '',
+      c: '',
     },
     examples: [
       { input: 's = "hello"', output: '"olleh"' },
@@ -78,15 +84,17 @@ export const PROBLEMS: CodingProblem[] = [
   {
     id: 'is_even',
     title: 'Check Even Integer',
-    description: 'Write a function that returns true (or True) if the integer n is even, and false (or False) otherwise.',
+    description: "Write a function named 'isEven' in JavaScript (or 'is_even' in Python/C) that accepts an integer n and returns true (or 1) if n is even, and false (or 0) otherwise.",
     difficulty: 'Easy',
     functionName: {
       js: 'isEven',
       python: 'is_even',
+      c: 'is_even',
     },
     starterCode: {
-      js: 'function isEven(n) {\n  return n % 2 === 0;\n}',
-      python: 'def is_even(n):\n    return n % 2 == 0',
+      js: '',
+      python: '',
+      c: '',
     },
     examples: [
       { input: 'n = 4', output: 'true' },
@@ -104,15 +112,17 @@ export const PROBLEMS: CodingProblem[] = [
   {
     id: 'sum_array',
     title: 'Sum of Array Elements',
-    description: 'Write a function that takes an array/list of numbers and returns their total sum. Return 0 for an empty array.',
+    description: "Write a function named 'sumArray' in JavaScript (or 'sum_array' in Python/C; in C: 'int sum_array(const int* arr, int size)') that accepts an array of numbers and returns their total sum. Return 0 for an empty array.",
     difficulty: 'Easy',
     functionName: {
       js: 'sumArray',
       python: 'sum_array',
+      c: 'sum_array',
     },
     starterCode: {
-      js: 'function sumArray(arr) {\n  return arr.reduce((a, b) => a + b, 0);\n}',
-      python: 'def sum_array(arr):\n    return sum(arr)',
+      js: '',
+      python: '',
+      c: '',
     },
     examples: [
       { input: 'arr = [1, 2, 3, 4]', output: '10' },
@@ -130,15 +140,17 @@ export const PROBLEMS: CodingProblem[] = [
   {
     id: 'count_vowels',
     title: 'Count Vowels',
-    description: 'Write a function that returns the total count of vowels (a, e, i, o, u, case-insensitive) in string s.',
+    description: "Write a function named 'countVowels' in JavaScript (or 'count_vowels' in Python/C) that accepts a string s and returns the total count of vowels (a, e, i, o, u, case-insensitive).",
     difficulty: 'Easy',
     functionName: {
       js: 'countVowels',
       python: 'count_vowels',
+      c: 'count_vowels',
     },
     starterCode: {
-      js: 'function countVowels(s) {\n  return (s.match(/[aeiou]/gi) || []).length;\n}',
-      python: 'def count_vowels(s):\n    return sum(1 for c in s.lower() if c in "aeiou")',
+      js: '',
+      python: '',
+      c: '',
     },
     examples: [
       { input: 's = "hello"', output: '2' },
@@ -149,7 +161,7 @@ export const PROBLEMS: CodingProblem[] = [
       { input: ['hello'], expected: 2 },
       { input: ['sky'], expected: 0 },
       { input: ['AEIOU'], expected: 5 },
-      { input: ['blind coding challenge'], expected: 7 },
+      { input: ['blind coding challenge'], expected: 6 },
       { input: [''], expected: 0 },
     ],
   },
