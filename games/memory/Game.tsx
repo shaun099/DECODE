@@ -14,11 +14,10 @@ export default function MemoryGame({ hud, view, send }: GameProps) {
   const matchedCount: number = view?.matchedCount ?? 0;
   const moves: number = view?.moves ?? 0;
   const peekMs: number = view?.peekMs ?? 0;
-  const runs: number = view?.runs ?? 0;
 
   const rows = Math.max(1, Math.ceil(tiles.length / cols));
 
-  const [msLeft, setMsLeft] = useState<number>(view?.msLeft ?? 0);
+  const [elapsed, setElapsed] = useState<number>(view?.elapsedMs ?? 0);
   const [pending, setPending] = useState<number[]>([]);
   const [tileSize, setTileSize] = useState(0);
   const sigRef = useRef('');
@@ -59,9 +58,10 @@ export default function MemoryGame({ hud, view, send }: GameProps) {
     return () => { if (settleRef.current) clearTimeout(settleRef.current); };
   }, [peekMs, send]);
 
-  useEffect(() => { setMsLeft(view?.msLeft ?? 0); }, [view?.msLeft]);
+  /* elapsed time, counting up — informational only, nothing expires */
+  useEffect(() => { setElapsed(view?.elapsedMs ?? 0); }, [view?.elapsedMs]);
   useEffect(() => {
-    const t = setInterval(() => setMsLeft((v: number) => Math.max(0, v - 250)), 250);
+    const t = setInterval(() => setElapsed((v: number) => v + 250), 250);
     return () => clearInterval(t);
   }, []);
 
@@ -87,8 +87,7 @@ export default function MemoryGame({ hud, view, send }: GameProps) {
     send({ tile: t.id });
   }
 
-  const s = Math.ceil(msLeft / 1000);
-  const urgent = s <= 30;
+  const s = Math.floor(elapsed / 1000);
   const wrongPair = peekMs > 0;
 
   return (
@@ -163,9 +162,10 @@ export default function MemoryGame({ hud, view, send }: GameProps) {
           <span className="text-zinc-500">
             Moves <span className="text-zinc-200">{moves}</span>
           </span>
-          <span className={urgent ? 'text-red-400' : 'text-emerald-300'}
-            style={{ fontVariantNumeric: 'tabular-nums' }}>
-            {pad(Math.floor(s / 60))}:{pad(s % 60)}
+          <span className="text-zinc-500" style={{ fontVariantNumeric: 'tabular-nums' }}>
+            Time <span className="text-zinc-200">
+              {pad(Math.floor(s / 60))}:{pad(s % 60)}
+            </span>
           </span>
         </div>
       </div>
@@ -275,9 +275,7 @@ export default function MemoryGame({ hud, view, send }: GameProps) {
         'h-5 shrink-0 text-center font-mono text-[12px] font-bold tracking-[0.16em] ' +
         'transition-colors ' + (wrongPair ? 'text-amber-400' : 'text-zinc-600')
       }>
-        {wrongPair ? 'Not a match'
-          : runs > 0 ? `Attempt ${runs + 1} · new board`
-          : 'Click two tiles'}
+        {wrongPair ? 'Not a match' : 'Click two tiles'}
       </p>
     </div>
   );
