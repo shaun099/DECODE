@@ -6,7 +6,7 @@ const card: CardModule = {
   id: 'blindcode',
   real: false,
   name: 'The Dark Terminal',
-  teaser: 'Write functioning code in a blurred terminal. The code unblurs once all tests pass.',
+ // teaser: 'Write functioning code in a blurred terminal. The code unblurs once all tests pass.',
   rules: [
     'A coding challenge is presented.',
     'Choose your language: JavaScript, Python, or C.',

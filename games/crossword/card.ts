@@ -10,7 +10,6 @@ const card: CardModule = {
   id: 'crossword',
   real: true,
   name: 'ByteCross',
-  teaser: 'Twenty answers. They hold each other up.',
   rules: [
     `A ${ROWS} by ${COLS} grid with ${WORDS.length} answers to find.`,
     'Click a clue, type the answer, press Enter to submit it.',

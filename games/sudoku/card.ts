@@ -17,7 +17,7 @@ const card: CardModule = {
   id: 'sudoku',
   real: true,
   name: 'The Dance of Numbers',
-  teaser: 'Nine rows, nine columns, and nothing may appear twice.',
+ // teaser: 'Nine rows, nine columns, and nothing may appear twice.',
   rules: [
     'One grid. Every row, column and 3×3 box must hold 1 to 9 with no repeats.',
     'The numbers already printed cannot be changed.',

@@ -4,8 +4,8 @@ import { BUGS } from './logic';
 const card: CardModule = {
   id: 'syntax',
   real: true,
-  name: 'The Compiler',
-  teaser: 'Snippets that will not build. One line each is at fault.',
+  name: 'The Guilty Line',
+  //teaser: 'Snippets that will not build. One line each is at fault.',
   rules: [
     `${BUGS.length} C snippets. Exactly one line in each will not compile.`,
     'Click the line at fault. Blank lines cannot be clicked.',

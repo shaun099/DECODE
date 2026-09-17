@@ -11,8 +11,7 @@ interface State {
 const card: CardModule = {
   id: 'leveldevil',
   real: false,                       // a platformer has no verifiable answer
-  name: 'The Honest Floor',
-  teaser: 'A simple platformer. The floor is right there.',
+  name: 'The Devil\'s Contract',
   rules: [
     'Reach the door. Three rooms.',
     'Arrow keys or A and D to move. Up, W or Space to jump.',

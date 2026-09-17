@@ -12,8 +12,8 @@ interface State {
 const card: CardModule = {
     id: 'output',
     real: true,
-    name: "What's the Output?",
-    teaser: 'Six snippets. No interpreter. Just your eyes and your instincts.',
+    name: "The Machine's Reply",
+   // teaser: 'Six snippets. No interpreter. Just your eyes and your instincts.',
     rules: [
         'Six Python snippets are shown one at a time, easiest first.',
         'Read each snippet and type the exact output it prints — nothing runs for you.',
