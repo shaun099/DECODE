@@ -45,7 +45,7 @@ const card: CardModule = {
   ],
   maxWrong: 3,
   key: { value: 'M2', position: 2 },
-  nextClue: 'Next: twenty intersecting answers that hold each other up across the grid.',
+  nextClue: 'Some answers prefer silence. They reveal themselves slowly to those who remain curious.',
 
   init: (): State => build(1, Date.now()),
 

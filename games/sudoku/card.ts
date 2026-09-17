@@ -27,7 +27,7 @@ const card: CardModule = {
   ],
   maxWrong: 99,
   key: { value: 'H1', position: 5 },
-  nextClue: 'You have recovered all 5 fragments. Head to the final terminal to assemble the key.',
+  nextClue: 'A question is looking for an answer. The answer is looking for a home. And somehow, the neighbours know both',
 
   init: () => ({ puzzle: makePuzzle() }),
 

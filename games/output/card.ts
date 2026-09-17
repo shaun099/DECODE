@@ -11,7 +11,7 @@ interface State {
 
 const card: CardModule = {
     id: 'output',
-    real: true,
+    real: false,
     name: "The Machine's Reply",
    // teaser: 'Six snippets. No interpreter. Just your eyes and your instincts.',
     rules: [

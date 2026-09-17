@@ -4,24 +4,16 @@ import { router, teamProcedure } from '../trpc';
 import { db, log } from '../db';
 import { CARDS, boardView, byId } from '../cards';
 
-const LOCK_MS = 60_000;
+const LOCK_MS = 2 * 60 * 1000; // 2 minutes
 const GAME_MS = 3 * 60 * 60 * 1000;
-// Admin-only lock: once locked, it stays until admin kick/unlock clears it.
-// We keep the timestamp far in the future so lockedFor stays >0 indefinitely.
-const ADMIN_LOCK_FAR_FUTURE_MS = 365 * 24 * 60 * 60 * 1000; // 1 year
 
 async function getTeam(id: string) {
   const { data } = await db.from('teams').select('*').eq('id', id).single();
   return data!;
 }
 
-const lockedFor = (t: { locked_until: string | null }) => {
-  if (!t.locked_until) return 0;
-  // If locked_until is set, treat as locked indefinitely until admin clears.
-  // Return a large value so Guard shows locked and only admin can open.
-  const ms = new Date(t.locked_until).getTime() - Date.now();
-  return ms > 0 ? ms : ADMIN_LOCK_FAR_FUTURE_MS;
-};
+const lockedFor = (t: { locked_until: string | null }) =>
+  t.locked_until ? Math.max(0, new Date(t.locked_until).getTime() - Date.now()) : 0;
 
 const timeLeft = (t: { started_at: string | null }) =>
   t.started_at ? Math.max(0, new Date(t.started_at).getTime() + GAME_MS - Date.now()) : GAME_MS;
@@ -90,6 +82,8 @@ export const gameRouter = router({
           maxWrong: card.maxWrong,
           committed: false,
           solved: true,
+          key: card.real && card.key ? card.key : null,
+          nextClue: card.nextClue ?? null,
         };
       }
 
@@ -188,20 +182,20 @@ export const gameRouter = router({
       const res = await card.attempt(row.state, input.payload);
       const attempts = row.attempts + (res.correct ? 0 : 1);
 
-      /* attempts exhausted -> lock, and reset the card — admin must kick/unlock */
+      /* attempts exhausted -> lock for 2 minutes, and reset the card */
       if ((!res.correct && attempts >= card.maxWrong) || (res as any).exhausted) {
-        const until = new Date(Date.now() + ADMIN_LOCK_FAR_FUTURE_MS).toISOString();
+        const until = new Date(Date.now() + LOCK_MS).toISOString();
         await db.from('progress')
           .update({ state: card.init(), attempts: 0 })
           .eq('team_id', ctx.teamId).eq('card_id', card.id);
         await db.from('teams')
           .update({ locked_until: until, active_card: null }).eq('id', ctx.teamId);
-        await log(ctx.teamId, 'lock', card.id, 'attempts exhausted — admin kick/unlock required');
+        await log(ctx.teamId, 'lock', card.id, 'attempts exhausted — locked for 2 minutes');
         return {
           correct: false,
           done: false,
           locked: true,
-          lockMs: ADMIN_LOCK_FAR_FUTURE_MS,
+          lockMs: LOCK_MS,
           attemptsLeft: 0,
           lastAnswer: (res as any).lastAnswer ?? null,
           lastPick: (res as any).lastPick ?? null,
@@ -273,7 +267,7 @@ export const gameRouter = router({
         lastPick: (res as any).lastPick ?? null,
         lastResult: (res as any).lastResult ?? null,
         key: null as null | { value: string; position: number },
-        nextClue: null as string | null,
+        nextClue: card.nextClue ?? null,
         
         view: null,
       };

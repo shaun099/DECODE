@@ -1,11 +1,12 @@
 'use client';
-import { use, useState, useEffect } from 'react';
+import { use, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Guard from '@/components/Guard';
 import GameHud from '@/components/GameHud';
 import LockClock from '@/components/LockClock';
 import { gameFor } from '@/games/registry';
 import { trpc } from '@/lib/trpc';
+import { KeyRound, Compass, Copy, Check, ArrowLeft, ShieldAlert, Sparkles } from 'lucide-react';
 
 export default function CardPage({ params }: { params: Promise<{ cardId: string }> }) {
   const { cardId } = use(params);
@@ -14,29 +15,9 @@ export default function CardPage({ params }: { params: Promise<{ cardId: string 
   const [session, setSession] = useState<any>(null);
   const [lockSec, setLockSec] = useState<number | null>(null);
   const [done, setDone] = useState<{ key: any; nextClue: string | null } | null>(null);
+  const [copied, setCopied] = useState(false);
 
   const brief = trpc.game.brief.useQuery({ cardId }, { retry: false });
-
-  // Poll for admin kick — if activeCard is cleared while we're on this card, go to board (/play).
-  // User explicitly wants /card (board) not /card/game_name, so we go to /play which is the board.
-  const kickedState = trpc.game.state.useQuery(undefined, {
-    refetchInterval: 800,
-    retry: false,
-    select: (d) => ({ activeCard: d.activeCard, lockedMs: d.lockedMs, finished: d.finished, expired: d.expired }),
-  });
-  useEffect(() => {
-    const s = kickedState.data;
-    if (!s || s.finished || s.expired) return;
-    // We are on /play/card/[cardId] and server says no active task → we were kicked
-    // Use hard replace to ensure we land on board (/play) not game's title/briefing
-    if (!s.activeCard) {
-      router.replace('/play');
-      // Fallback hard navigation in case Next router is stuck in game
-      setTimeout(() => {
-        if (window.location.pathname.startsWith('/play/card/')) window.location.replace('/play');
-      }, 400);
-    }
-  }, [kickedState.data, router]);
 
   const start = trpc.game.start.useMutation({ onSuccess: (d) => setSession(d) });
 
@@ -53,34 +34,35 @@ export default function CardPage({ params }: { params: Promise<{ cardId: string 
     },
   });
 
+  const handleCopy = (text: string) => {
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   if (brief.isLoading) return null;
 
   /* ---------- locked out, straight from the attempt response ---------- */
   if (lockSec !== null) {
-    const adminOnly = lockSec > 86400;
     return (
-      <div className="flex min-h-screen items-center justify-center px-4">
-        <div className="max-w-md border-2 border-red-900 bg-black/60 px-10 py-10 text-center">
-          <p className="text-xl font-black tracking-[0.2em] text-red-400">OUT OF ATTEMPTS</p>
-          <p className="mt-4 text-sm leading-relaxed text-zinc-400">
-            This task has been reset to its beginning. No task can be opened until an admin clears it.
+      <div className="flex min-h-screen items-center justify-center px-4 bg-zinc-950 bg-[url('/bg_play.png')] bg-cover bg-center">
+        <div className="absolute inset-0 bg-black/80 backdrop-blur-md" />
+        <div className="relative z-10 max-w-md rounded-3xl border-2 border-red-500/40 bg-zinc-950/95 p-8 text-center shadow-[0_0_50px_rgba(239,68,68,0.2)]">
+          <p className="font-mono text-xs font-bold tracking-[0.25em] text-red-400">
+            SYSTEM COOLDOWN // ATTEMPTS EXHAUSTED
           </p>
-          {adminOnly ? (
-            <p className="mt-7 rounded-lg border border-amber-900/50 bg-amber-950/20 px-4 py-3 font-mono text-sm font-bold tracking-wide text-amber-300">
-              🔒 LOCKED — CONTACT ADMIN TO KICK/UNLOCK
-            </p>
-          ) : (
-            <LockClock seconds={lockSec} onComplete={() => router.replace('/play')} />
-          )}
-          <p className="mt-6 font-mono text-[11px] tracking-[0.2em] text-zinc-600">
-            THE THREE HOUR CLOCK KEEPS RUNNING
+          <h2 className="mt-2 text-2xl font-black uppercase tracking-[0.15em] text-white">
+            TERMINAL LOCKED
+          </h2>
+          <p className="mt-3 font-mono text-xs leading-relaxed text-zinc-400">
+            Attempts exhausted. This challenge has been reset. The terminal is locked for 2 minutes and will automatically unlock.
           </p>
-          <button
-            onClick={() => router.replace('/play')}
-            className="mt-6 border border-zinc-700 px-6 py-2.5 font-mono text-xs text-zinc-400 transition-colors hover:border-zinc-500 hover:text-zinc-100"
-          >
-            RETURN TO BOARD
-          </button>
+
+          <LockClock seconds={lockSec} onComplete={() => router.replace('/play')} />
+
+          <p className="mt-6 font-mono text-[11px] tracking-[0.2em] text-zinc-500">
+            THE MAIN EVENT CLOCK KEEPS RUNNING
+          </p>
         </div>
       </div>
     );
@@ -101,46 +83,108 @@ export default function CardPage({ params }: { params: Promise<{ cardId: string 
     );
   }
 
-  /* ---------- finished ---------- */
-  if (done) {
+  /* ---------- finished / solved view ---------- */
+  const finalKey = done?.key ?? (brief.data?.solved ? brief.data.key : null);
+  const finalNextClue = done?.nextClue ?? (brief.data?.solved ? brief.data.nextClue : null);
+  const isCompleted = !!done || !!brief.data?.solved;
+
+  if (isCompleted) {
     return (
       <Guard>
-        <div className="flex min-h-screen flex-col items-center justify-center gap-7 px-4 text-center">
-          <p className="font-mono text-[11px] tracking-[0.28em] text-emerald-500">
-            {done.key ? 'FRAGMENT RECOVERED' : 'NO FRAGMENT FOUND'}
-          </p>
-          <h2 className="text-3xl font-black tracking-[0.14em] text-emerald-300">
-            {done.key ? 'KEY RECOVERED' : 'OOPS! NO KEY PRESENT'}
-          </h2>
+        <div className="relative min-h-screen w-full flex items-center justify-center px-4 py-12 bg-zinc-950 bg-[url('/bg_play.png')] bg-cover bg-center overflow-y-auto">
+          <div className="absolute inset-0 bg-black/75 backdrop-blur-md" />
 
-          {!done.key && (
-            <p className="font-mono text-sm text-zinc-400">
-              This task contains no key fragment. Keep hunting on the board.
-            </p>
-          )}
+          <div className="relative z-10 w-full max-w-xl flex flex-col items-center gap-6 rounded-3xl border border-[#a3e635]/40 bg-zinc-950/90 p-6 sm:p-10 shadow-[0_0_50px_rgba(163,230,53,0.15)] text-center">
+            
+            {/* Status Header Badge */}
+            {finalKey ? (
+              <div className="inline-flex items-center gap-2 rounded-full border border-lime-400/40 bg-lime-500/10 px-4 py-1.5 font-mono text-xs font-semibold tracking-wider text-lime-400 shadow-[0_0_15px_rgba(163,230,53,0.2)]">
+                <Sparkles className="h-4 w-4 text-lime-400" />
+                <span>MISSION ACCOMPLISHED // FRAGMENT SECURED</span>
+              </div>
+            ) : (
+              <div className="inline-flex items-center gap-2 rounded-full border border-zinc-700 bg-zinc-800/80 px-4 py-1.5 font-mono text-xs font-semibold tracking-wider text-zinc-300">
+                <ShieldAlert className="h-4 w-4 text-amber-400" />
+                <span>CHALLENGE CLEARED // DECOY NODE</span>
+              </div>
+            )}
 
-          {done.key && (
-            <p className="font-mono text-2xl tracking-[0.3em] text-emerald-300">
-              {done.key.value}
-              <span className="ml-4 text-sm tracking-normal text-zinc-500">
-                position {done.key.position}
-              </span>
-            </p>
-          )}
-
-          {done.nextClue && (
-            <div className="max-w-md border-2 border-emerald-900/70 bg-black/50 px-7 py-6">
-              <p className="font-mono text-[11px] tracking-[0.28em] text-emerald-500">NEXT</p>
-              <p className="mt-3 text-[15px] leading-relaxed text-zinc-200">{done.nextClue}</p>
+            {/* Main Title */}
+            <div>
+              <h2 className="text-2xl sm:text-3xl font-black uppercase tracking-[0.12em] text-white">
+                {finalKey ? 'KEY FRAGMENT RECOVERED' : 'OOPS! NO KEY PRESENT'}
+              </h2>
+              <p className="mt-2 font-mono text-xs sm:text-sm text-zinc-400">
+                {finalKey
+                  ? 'Encryption fragment decrypted and archived into your team Key Vault.'
+                  : 'This challenge was a decoy node. No encryption fragment is hidden here.'}
+              </p>
             </div>
-          )}
 
-          <button onClick={() => router.replace('/play')} autoFocus
-            className="border-2 border-emerald-600 bg-emerald-500/10 px-9 py-4 text-[13px]
-                       font-bold uppercase tracking-[0.2em] text-emerald-300
-                       transition-all hover:bg-emerald-500 hover:text-black">
-            Back to the board
-          </button>
+            {/* Key Fragment Card */}
+            {finalKey && (
+              <div className="w-full rounded-2xl border-2 border-lime-400/50 bg-black/80 p-5 sm:p-6 shadow-[inset_0_0_30px_rgba(163,230,53,0.08)]">
+                <div className="flex items-center justify-between pb-3 border-b border-lime-900/40">
+                  <span className="flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-widest text-lime-400">
+                    <KeyRound className="h-4 w-4" />
+                    FRAGMENT #{finalKey.position}
+                  </span>
+                  <span className="rounded bg-lime-400/20 px-2 py-0.5 font-mono text-[11px] font-bold text-lime-300">
+                    SLOT {finalKey.position} / 5
+                  </span>
+                </div>
+
+                <div className="my-5 flex flex-col items-center justify-center gap-2">
+                  <div className="rounded-xl border border-lime-400/30 bg-lime-950/20 px-6 py-4">
+                    <span className="font-mono text-3xl sm:text-4xl font-black tracking-[0.25em] text-lime-300 drop-shadow-[0_0_12px_rgba(163,230,53,0.6)]">
+                      {finalKey.value}
+                    </span>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => handleCopy(finalKey.value)}
+                  className="mx-auto flex items-center justify-center gap-2 rounded-lg border border-lime-400/40 bg-lime-500/10 px-4 py-2 font-mono text-xs font-semibold text-lime-300 transition-all hover:bg-lime-500 hover:text-black active:scale-95"
+                >
+                  {copied ? (
+                    <>
+                      <Check className="h-3.5 w-3.5 text-lime-400" />
+                      COPIED TO CLIPBOARD
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="h-3.5 w-3.5 text-lime-400" />
+                      COPY FRAGMENT VALUE
+                    </>
+                  )}
+                </button>
+              </div>
+            )}
+
+            {/* Next Card Clue */}
+            {finalNextClue && (
+              <div className="w-full rounded-2xl border border-lime-500/30 bg-black/60 p-5 sm:p-6 text-left">
+                <div className="flex items-center gap-2 font-mono text-xs font-bold tracking-widest text-lime-400 pb-2 border-b border-zinc-800">
+                  <Compass className="h-4 w-4" />
+                  <span>INTERCEPTED TRANSMISSION // NEXT CARD CLUE</span>
+                </div>
+                <p className="mt-3.5 font-mono text-sm leading-relaxed text-zinc-100 font-medium">
+                  &ldquo;{finalNextClue}&rdquo;
+                </p>
+              </div>
+            )}
+
+            {/* Action Return Button */}
+            <button
+              onClick={() => router.replace('/play')}
+              autoFocus
+              className="mt-2 w-full flex items-center justify-center gap-2 rounded-xl border-2 border-lime-400 bg-lime-500/20 py-4 font-mono text-xs sm:text-sm font-black tracking-[0.2em] text-lime-300 shadow-[0_0_30px_rgba(163,230,53,0.3)] transition-all hover:bg-lime-400 hover:text-black hover:shadow-[0_0_40px_rgba(163,230,53,0.5)] active:scale-[0.98]"
+            >
+              <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
+              <span>RETURN TO CARD SELECTION</span>
+            </button>
+          </div>
         </div>
       </Guard>
     );
@@ -149,22 +193,6 @@ export default function CardPage({ params }: { params: Promise<{ cardId: string 
   /* ---------- briefing ---------- */
   if (!session) {
     const b = brief.data!;
-    if (b.solved) {
-      return (
-        <Guard>
-          <div className="mx-auto flex min-h-screen max-w-lg flex-col items-center justify-center gap-6 px-6 text-center">
-            <h1 className="text-3xl font-black tracking-[0.14em] text-zinc-400">TASK ALREADY CLEARED</h1>
-            <p className="font-mono text-xs text-zinc-500">This task has already been completed by your team.</p>
-            <button
-              onClick={() => router.replace('/play')}
-              className="border-2 border-zinc-700 px-6 py-3 font-mono text-[12px] tracking-[0.2em] text-zinc-300 transition-colors hover:border-zinc-500 hover:text-zinc-100"
-            >
-              BACK TO THE BOARD
-            </button>
-          </div>
-        </Guard>
-      );
-    }
     return (
       <Guard>
         <div className="mx-auto flex min-h-screen max-w-lg flex-col justify-center gap-7 px-6 py-10">

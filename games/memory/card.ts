@@ -26,7 +26,7 @@ function visible(s: State): number[] {
 
 const card: CardModule = {
   id: 'memory',
-  real: true,
+  real: false,
   name: 'The Forgotten Room',
  // teaser: 'Thirty-six tiles. Eighteen matches. Your memory is the only tool.',
   rules: [

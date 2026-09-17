@@ -20,7 +20,7 @@ const card: CardModule = {
   ],
   maxWrong: 9999,                   // no lockout on this card
   key: { value: 'R9', position: 3 },
-  nextClue: 'Next: two twin scenes with ten subtle differences. Your eyes are the only tool.',
+  nextClue: 'The computer isn\'t angry. It simply refuses to understand one tiny thing. Find the place where almost-correct becomes completely-wrong',
 
   init: (): State => ({ solved: [], letters: {} }),
 

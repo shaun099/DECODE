@@ -19,7 +19,7 @@ const card: CardModule = {
   ],
   maxWrong: 6,
   key: { value: 'W5', position: 4 },
-  nextClue: 'Next: nine rows, nine columns, and nothing may appear twice.',
+  nextClue: 'They never speak, yet somehow they stay in sync. Change one position, and the balance is lost.',
 
   init: (): State => ({ marks: [] }),
 
