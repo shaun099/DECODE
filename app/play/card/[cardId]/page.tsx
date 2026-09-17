@@ -38,21 +38,15 @@ export default function CardPage({ params }: { params: Promise<{ cardId: string 
   if (lockSec !== null) {
     return (
       <div className="flex min-h-screen items-center justify-center px-4">
-        <div className="max-w-md border-2 border-red-900 bg-black/60 px-10 py-10 text-center">
-          <p className="text-xl font-black tracking-[0.2em] text-red-400">OUT OF ATTEMPTS</p>
-          <p className="mt-4 text-sm leading-relaxed text-zinc-400">
-            This task has been reset to its beginning. No task can be opened until this clears.
+        <div className="max-w-md rounded-2xl border-2 border-red-500/80 bg-black/80 px-10 py-10 text-center shadow-[0_0_40px_rgba(239,68,68,0.2)] backdrop-blur-md">
+          <p className="font-mono text-xl font-black tracking-[0.2em] text-red-400">TERMINAL LOCKED</p>
+          <p className="mt-4 font-mono text-sm leading-relaxed text-zinc-300">
+            Attempts exhausted. This task has been reset. You will be returned to the board when the lock clears.
           </p>
           <LockClock seconds={lockSec} onComplete={() => router.replace('/play')} />
-          <p className="mt-6 font-mono text-[11px] tracking-[0.2em] text-zinc-600">
+          <p className="mt-6 font-mono text-[11px] tracking-[0.2em] text-zinc-500">
             THE THREE HOUR CLOCK KEEPS RUNNING
           </p>
-          <button
-            onClick={() => router.replace('/play')}
-            className="mt-6 border border-zinc-700 px-6 py-2.5 font-mono text-xs text-zinc-400 transition-colors hover:border-zinc-500 hover:text-zinc-100"
-          >
-            RETURN TO BOARD
-          </button>
         </div>
       </div>
     );
