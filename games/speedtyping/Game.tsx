@@ -235,7 +235,7 @@ export default function SpeedTypingGame({ hud, view, send }: GameProps) {
           <p className="mt-1 text-sm text-zinc-500">
             {currentLevel === 0 && 'Warm up. Simple sentence — 25s.'}
             {currentLevel === 1 && 'Code snippet. Symbols matter — 35s.'}
-            {currentLevel === 2 && 'Longer sentence. Stay accurate — 40s.'}
+            {currentLevel === 2 && 'Longer sentence. Stay accurate — 25s.'}
             {currentLevel === 3 && 'Final boss. Code + symbols — 40s. You got this.'}
           </p>
         </div>
@@ -309,7 +309,7 @@ export default function SpeedTypingGame({ hud, view, send }: GameProps) {
         </div>
 
         <p className="shrink-0 text-center font-mono text-[11px] leading-relaxed tracking-wide text-zinc-600">
-          Tip: Time scales with complexity (25→35→40→40s). Hard but not brutal — aim for ~25 WPM. Punctuation must match exactly.
+          Tip: Time scales with complexity (25→35→25→40s). Hard but not brutal — aim for ~25 WPM. Punctuation must match exactly.
         </p>
       </div>
     </div>

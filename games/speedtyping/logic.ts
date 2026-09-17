@@ -3,7 +3,7 @@ export const TIME_LIMIT_MS = 27_000; // fallback/default
 export const TIME_LIMITS_MS: number[] = [
   25_000, // Level 1 — easy, short natural sentence
   35_000, // Level 2 — code with symbols, medium
-  40_000, // Level 3 — longer prose, hard
+  25_000, // Level 3 — longer prose, now 25s as requested
   40_000, // Level 4 — code-heavy, hardest
 ];
 
