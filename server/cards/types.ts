@@ -11,7 +11,7 @@ export interface CardModule {
   id: string;
   real: boolean;
   name: string;
-  teaser: string;
+  teaser?: string;
   rules: string[];
   maxWrong: number;
   key?: { value: string; position: number };

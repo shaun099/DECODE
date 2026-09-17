@@ -11,6 +11,7 @@ import PasswordGame from './password/Game';
 import LevelDevilGame from './leveldevil/Game';
 import BlindcodeGame from './blindcode/Game';
 import MazeGame from './maze/Game';
+import OutputGame from './output/Game';
 import SpeedTypingGame from './speedtyping/Game';
 import DecoyGame from './decoys/Game';
 import MemoryGame from './memory/Game';
@@ -34,6 +35,7 @@ const MAP: Record<string, ComponentType<GameProps>> = {
   leveldevil: LevelDevilGame,
   blindcode: BlindcodeGame,
   maze: MazeGame,
+  output: OutputGame,
   speedtyping: SpeedTypingGame,
   memory: MemoryGame,
 };

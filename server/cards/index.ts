@@ -12,12 +12,30 @@ import password from '@/games/password/card';
 import maze from '@/games/maze/card';
 import memory from '@/games/memory/card';
 import blindcode from '@/games/blindcode/card';
+import output from '@/games/output/card';
 import speedtyping from '@/games/speedtyping/card';
 
 export type { CardModule };
 
+export const CARDS: CardModule[] = [
+  syntax,
+  logicbug,
+  phishing,
+  quiz,
+  sudoku,
+  crossword,
+  spot,
+  leetcode,
+  password,
+  captcha,
+  maze,
+  blindcode,
+  output,
+  speedtyping,
+  memory,
+  ...DECOYS,
+];
 
-export const CARDS: CardModule[] = [syntax, logicbug, phishing, quiz, sudoku, crossword, spot, leetcode, password,speedtyping, maze, blindcode,memory,...DECOYS];
 export const byId = (id: string) => CARDS.find((c) => c.id === id);
 
 function mulberry32(a: number) {
