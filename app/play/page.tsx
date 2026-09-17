@@ -61,7 +61,6 @@ export default function Play() {
               ))}
             </div>
             <span className="font-mono text-xs sm:text-sm font-medium text-zinc-300">
-              {data.keys.length}/{data.totalKeys}
               {`${data.keys.length} / ${data.totalKeys}`}
             </span>
           </div>
@@ -73,16 +72,14 @@ export default function Play() {
         </header>
 
         {/* Main Card Selection Container */}
-        <main className="z-10 flex min-h-0 w-full max-w-5xl flex-1 flex-col items-center justify-center my-2 sm:my-3">
-          <div className="relative flex h-full max-h-[82vh] w-full flex-col items-center justify-between rounded-3xl border-2 border-lime-500/80 bg-black/45 p-4 sm:p-6 backdrop-blur-xs shadow-[0_0_30px_rgba(132,204,22,0.1)]">
+        <main className="z-10 flex min-h-0 w-full max-w-5xl flex-1 flex-col items-center justify-center ">
+          <div className="relative flex h-full max-h-[90vh] w-full flex-col items-center justify-between rounded-3xl border-2 border-lime-500/80 bg-black/45 p-4 sm:p-6 backdrop-blur-xs shadow-[0_0_30px_rgba(132,204,22,0.1)]">
             {/* Box Header Titles */}
             <div className="flex flex-col items-center text-center pb-2 shrink-0">
               <h1 className="font-mono text-xl sm:text-2xl md:text-3xl font-black uppercase tracking-[0.22em] text-[#86efac] drop-shadow-[0_0_12px_rgba(134,239,172,0.6)]">
                 CARD SELECTION
               </h1>
-              <p className="font-serif text-[10px] sm:text-xs tracking-[0.35em] uppercase text-lime-100/90 mt-1">
-                SELECT YOUR DESTINATION
-              </p>
+              
             </div>
 
             {/* 5x3 Cards Grid */}
@@ -121,7 +118,6 @@ export default function Play() {
                          hover:shadow-[0_0_40px_rgba(52,211,153,0.6)]"
             >
               <Sparkles className="h-4 w-4 text-emerald-300 group-hover:text-black" />
-              <span>ALL KEYS RECOVERED // ASSEMBLE ANSWER</span>
               <span>{'ALL KEYS RECOVERED // ASSEMBLE ANSWER'}</span>
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1.5" />
             </button>
