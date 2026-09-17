@@ -74,13 +74,30 @@ export const gameRouter = router({
       const { data: p } = await db.from('progress')
         .select('solved_at').eq('team_id', ctx.teamId).eq('card_id', card.id).maybeSingle();
 
+      if (p?.solved_at) {
+        return {
+          name: card.name,
+          teaser: card.teaser,
+          rules: card.rules,
+          maxWrong: card.maxWrong,
+          committed: false,
+          solved: true,
+        };
+      }
+
+      // Lock the player to this card upon initializing briefing
+      if (!t.active_card) {
+        await db.from('teams').update({ active_card: card.id }).eq('id', ctx.teamId);
+        await log(ctx.teamId, 'init_card', card.id);
+      }
+
       return {
         name: card.name,
         teaser: card.teaser,
         rules: card.rules,
         maxWrong: card.maxWrong,
-        committed: t.active_card === card.id,
-        solved: !!p?.solved_at,
+        committed: true,
+        solved: false,
       };
     }),
 
@@ -100,6 +117,10 @@ export const gameRouter = router({
 
       const { data: existing } = await db.from('progress')
         .select('*').eq('team_id', ctx.teamId).eq('card_id', card.id).maybeSingle();
+
+      if (existing?.solved_at) {
+        throw new TRPCError({ code: 'FORBIDDEN', message: 'this task has already been solved' });
+      }
 
       let state = existing?.state;
       if (!existing) {
@@ -254,5 +275,18 @@ export const gameRouter = router({
           .update({ finished_at: new Date().toISOString() }).eq('id', ctx.teamId);
       }
       return { ok };
+    }),
+
+  logViolation: teamProcedure
+    .input(
+      z.object({
+        kind: z.enum(['tab_switch', 'window_blur', 'fullscreen_exit']),
+        detail: z.string().max(200).optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const t = await getTeam(ctx.teamId);
+      await log(ctx.teamId, input.kind, t.active_card ?? undefined, input.detail);
+      return { ok: true };
     }),
 });

@@ -62,25 +62,49 @@ export default function CrosswordGame({ hud, view, send }: GameProps) {
     setTimeout(() => inputRef.current?.focus(), 0);
   }
 
-  function submit() {
+  async function submit() {
     if (!cur || pending) return;
     const g = guess.trim().toUpperCase();
     if (g.length !== cur.length) return;
 
-    const before = solved.length;
-    setPending(cur.key);
+    const key = cur.key;
+    setPending(key);
     setMiss(null);
-    send({ key: cur.key, guess: g });
+    try {
+      const res = (await send({ key, guess: g })) as {
+        view?: { solved?: string[] } | null;
+        done?: boolean;
+      } | null;
 
-    // no change to the solved count shortly after means it was wrong
-    setTimeout(() => {
-      if (solved.length === before) {
-        setMiss(cur.key);
-        setPending(null);
-        setGuess('');
-        inputRef.current?.focus();
+      // done → card solved (view is nulled by the router); treat as success
+      if (res?.done) return;
+
+      const nextSolved: string[] = res?.view?.solved ?? [];
+
+      // Some server paths can return null view without done; fall back to
+      // the heuristic only in that narrow case, but prefer the explicit view.
+      const succeeded =
+        nextSolved.includes(key) ||
+        // fallback: if view was nulled for any reason, check the prop that will
+        // be updated via the session (already reflected in solved)
+        (!res?.view && solved.includes(key));
+
+      if (succeeded) {
+        // success — the solved-length effect will clear input / active / pending
+        return;
       }
-    }, 600);
+
+      // wrong word: show free-guess message
+      setMiss(key);
+      setGuess('');
+      inputRef.current?.focus();
+    } catch {
+      setMiss(key);
+      setGuess('');
+      inputRef.current?.focus();
+    } finally {
+      setPending((p) => (p === key ? null : p));
+    }
   }
 
   const across = clues.filter((c) => c.direction === 'across');

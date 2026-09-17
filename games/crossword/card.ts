@@ -20,8 +20,8 @@ const card: CardModule = {
     'You cannot leave once you begin.',
   ],
   maxWrong: 9999,                   // no lockout on this card
-  key: { value: 'R9', position: 6 },
-  nextClue: 'Next: nine rows, nine columns, nothing twice.',
+  key: { value: 'R9', position: 3 },
+  nextClue: 'Next: two twin scenes with ten subtle differences. Your eyes are the only tool.',
 
   init: (): State => ({ solved: [], letters: {} }),
 

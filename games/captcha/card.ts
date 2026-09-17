@@ -34,7 +34,7 @@ const levelLeft = (s: State) =>
 
 const card: CardModule = {
   id: 'captcha',
-  real: true,
+  real: false,
   name: 'Are You Human?',
   teaser: 'Five verification levels. Each one less reasonable than the last.',
   rules: [
@@ -47,8 +47,7 @@ const card: CardModule = {
     'You cannot leave once you begin.',
   ],
   maxWrong: 3,
-  key: { value: 'R6', position: 9 },
-  nextClue: 'Next: a website that says more than it means to.',
+  nextClue: '',
 
   init: (): State => fresh(0, Date.now()),
 

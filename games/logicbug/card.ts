@@ -3,7 +3,7 @@ import { BUGS } from './logic';
 
 const card: CardModule = {
   id: 'logicbug',
-  real: true,
+  real: false,
   name: 'The Polite Liar',
   teaser: 'Programs that run perfectly and answer wrongly.',
   rules: [
@@ -14,8 +14,7 @@ const card: CardModule = {
     'You cannot leave once you begin.',
   ],
   maxWrong: 4,
-  key: { value: 'A4', position: 2 },
-  nextClue: 'Next: five letters, none of them honest.',
+  nextClue: '',
 
   init: () => ({ i: 0, wrong: [] as number[] }),
 

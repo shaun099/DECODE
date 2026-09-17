@@ -9,12 +9,12 @@ import CrosswordGame from './crossword/Game';
 import SpotGame from './spot/Game';
 import PasswordGame from './password/Game';
 import CaptchaGame from './captcha/Game';
-import DecoyGame from './decoys/Game';
-import { DECOY_IDS } from './decoys/ids';
-import LeetCodeGame from './leetcode/Game';
+import LevelDevilGame from './leveldevil/Game';
 import BlindcodeGame from './blindcode/Game';
 import MazeGame from './maze/Game';
 import OutputGame from './output/Game';
+import DecoyGame from './decoys/Game';
+import { DECOY_IDS } from './decoys/ids';
 
 export interface GameProps {
   hud: ReactNode;
@@ -29,10 +29,10 @@ const MAP: Record<string, ComponentType<GameProps>> = {
   quiz: QuizGame,
   sudoku: SudokuGame,
   crossword: CrosswordGame,
-  leetcode: LeetCodeGame,
   spot: SpotGame,
   password: PasswordGame,
   captcha: CaptchaGame,
+  leveldevil: LevelDevilGame,
   blindcode: BlindcodeGame,
   maze: MazeGame,
   output: OutputGame,

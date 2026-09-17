@@ -46,6 +46,10 @@ export interface RankRow {
   solvedTotal: number;
   solvedReal: number;
   solvedDecoys: number;
+  tabSwitches: number;
+  windowBlurs: number;
+  fullscreenExits: number;
+  totalViolations: number;
 }
 
 export interface LogItem {
@@ -97,12 +101,21 @@ export const adminRouter = router({
       const { data: progress } = await db
         .from('progress')
         .select('team_id, card_id, solved_at, attempts');
+      const { data: violationLogs } = await db
+        .from('logs')
+        .select('team_id, kind, detail, at')
+        .in('kind', ['tab_switch', 'window_blur', 'fullscreen_exit']);
 
       const totalClues = CARDS.filter((c) => c.real).length; // 5 real clue cards
 
       const rows = (teams ?? []).map((t) => {
         const teamKeys = (keys ?? []).filter((k) => k.team_id === t.id);
         const teamProg = (progress ?? []).filter((p) => p.team_id === t.id && p.solved_at);
+        const tViolations = (violationLogs ?? []).filter((l) => l.team_id === t.id);
+        const tabSwitches = tViolations.filter((l) => l.kind === 'tab_switch').length;
+        const windowBlurs = tViolations.filter((l) => l.kind === 'window_blur').length;
+        const fullscreenExits = tViolations.filter((l) => l.kind === 'fullscreen_exit').length;
+        const totalViolations = tViolations.length;
 
         const keyDetails: KeyDetail[] = teamKeys
           .map((k) => {
@@ -172,6 +185,10 @@ export const adminRouter = router({
           solvedTotal: teamProg.length,
           solvedReal,
           solvedDecoys,
+          tabSwitches,
+          windowBlurs,
+          fullscreenExits,
+          totalViolations,
           rank: 0,
         };
       });

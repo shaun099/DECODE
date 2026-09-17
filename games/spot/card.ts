@@ -18,8 +18,8 @@ const card: CardModule = {
     'You cannot leave once you begin.',
   ],
   maxWrong: 6,
-  key: { value: 'W5', position: 7 },
-  nextClue: 'Next: twenty answers that hold each other up.',
+  key: { value: 'W5', position: 4 },
+  nextClue: 'Next: nine rows, nine columns, and nothing may appear twice.',
 
   init: (): State => ({ marks: [] }),
 

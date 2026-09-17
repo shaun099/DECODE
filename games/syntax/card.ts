@@ -15,7 +15,7 @@ const card: CardModule = {
   ],
   maxWrong: 4,
   key: { value: 'K7', position: 1 },
-  nextClue: 'Next: the one that runs perfectly and answers wrongly.',
+  nextClue: 'Next: a labyrinth of locked doors where every step requires an answer.',
 
   init: () => ({ i: 0, wrong: [] as number[] }),
 

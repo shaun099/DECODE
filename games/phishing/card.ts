@@ -5,7 +5,7 @@ const seg = (line: string) => parse(line);
 
 const card: CardModule = {
   id: 'phishing',
-  real: true,
+  real: false,
   name: 'The Honest Letter',
   teaser: 'Five messages. Every one is lying about something small.',
   rules: [
@@ -16,8 +16,7 @@ const card: CardModule = {
     'You cannot leave once you begin.',
   ],
   maxWrong: 4,
-  key: { value: 'V2', position: 3 },
-  nextClue: 'Next: nine rows, nine columns, nothing twice.',
+  nextClue: '',
 
   init: () => ({ i: 0, found: [] as string[], wrong: [] as string[] }),
 
