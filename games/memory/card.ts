@@ -27,8 +27,8 @@ function visible(s: State): number[] {
 const card: CardModule = {
   id: 'memory',
   real: true,
-  name: 'The Pairs',
-  teaser: 'Thirty-six tiles. Eighteen matches. Your memory is the only tool.',
+  name: 'The Forgotten Room',
+ // teaser: 'Thirty-six tiles. Eighteen matches. Your memory is the only tool.',
   rules: [
     `${PAIRS} pairs hidden under ${PAIRS * 2} tiles.`,
     'Click two tiles. If they match they stay face up.',
