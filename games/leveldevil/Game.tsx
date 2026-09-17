@@ -183,10 +183,6 @@ export default function LevelDevilGame({ hud, view, send }: GameProps) {
 
         <div id="menu">
           <div className="menu-inner">
-            <h1 className="title">
-              <span className="t-fable">THE HONEST</span>
-              <span className="t-devil">FLOOR</span>
-            </h1>
             <p className="subtitle">Three rooms. The floor is right there.</p>
             <button id="play-btn">PLAY</button>
             <div className="grid-label">rooms</div>
