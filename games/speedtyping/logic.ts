@@ -1,10 +1,10 @@
 export const LEVEL_COUNT = 4;
 export const TIME_LIMIT_MS = 27_000; // fallback/default
 export const TIME_LIMITS_MS: number[] = [
-  15_000, // Level 1 — 15s as requested
-  30_000, // Level 2 — 30s as requested
-  15_000, // Level 3 — 15s as requested
-  30_000, // Level 4 — 30s as requested
+  10_000, // Level 1 — 10s as requested
+  30_000, // Level 2 — 30s
+  10_000, // Level 3 — 10s as requested
+  30_000, // Level 4 — 30s
 ];
 
 export const SENTENCES: string[] = [

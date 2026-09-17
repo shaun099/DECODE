@@ -10,10 +10,10 @@ const card: CardModule = {
   id: 'speedtyping',
   real: false,
   name: 'The KeyBoard Race',
-  teaser: 'Type fast. 15–30 seconds per sentence depending on complexity. Four levels.',
+  teaser: 'Type fast. 10–30 seconds per sentence depending on complexity. Four levels.',
   rules: [
     'Type the sentence exactly — case and punctuation matter.',
-    'Each level has its own timer (L1 15s → L2 30s → L3 15s → L4 30s); clock starts on first keystroke.',
+    'Each level has its own timer (L1 10s → L2 30s → L3 10s → L4 30s); clock starts on first keystroke.',
     'Finish all four levels in order to pass.',
     'Copy-paste is blocked. You must type.',
     'You cannot leave once you begin.',
