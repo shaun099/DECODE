@@ -303,13 +303,22 @@ export const adminRouter = router({
     .input(z.object({ pw: z.string(), teamId: z.string() }))
     .mutation(async ({ input }) => {
       guard(input.pw);
-      const { data: team } = await db.from('teams').select('active_card').eq('id', input.teamId).single();
-      if (!team?.active_card) {
+      const { data: team } = await db.from('teams').select('active_card, locked_until').eq('id', input.teamId).single();
+      const wasLocked = !!team?.locked_until && new Date(team.locked_until).getTime() > Date.now();
+      const cardId = team?.active_card ?? null;
+      if (!cardId && !wasLocked) {
         throw new TRPCError({ code: 'BAD_REQUEST', message: 'Team is not in a task.' });
       }
-      const cardId = team.active_card;
-      await db.from('teams').update({ active_card: null }).eq('id', input.teamId);
-      await log(input.teamId, 'admin_kick', cardId, 'Kicked from task by administrator — returned to board');
-      return { ok: true };
+      // Kick clears both the task and any lock — only admin can open the lock
+      await db.from('teams').update({ active_card: null, locked_until: null }).eq('id', input.teamId);
+      await log(
+        input.teamId,
+        wasLocked ? 'admin_unlock' : 'admin_kick',
+        cardId ?? undefined,
+        wasLocked
+          ? 'Lock opened by administrator (via kick) — returned to board'
+          : 'Kicked from task by administrator — returned to board'
+      );
+      return { ok: true, wasLocked };
     }),
 });

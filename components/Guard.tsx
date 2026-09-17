@@ -73,18 +73,25 @@ export default function Guard({ children }: { children: React.ReactNode }) {
     );
   }
 
-  /* locked out */
+  /* locked out — admin must kick/unlock (indefinite) */
   if (s!.locked) {
+    const adminOnly = s!.lockedSec > 86400; // kick/unlock far-future = admin-only
     return (
       <div className="flex min-h-screen items-center justify-center px-4">
         <div className="max-w-md border-2 border-red-900 bg-black/60 px-10 py-10 text-center">
           <p className="text-xl font-black tracking-[0.2em] text-red-400">TERMINAL LOCKED</p>
           <p className="mt-4 text-sm leading-relaxed text-zinc-400">
             Attempts exhausted. The task has been reset to its beginning, and no other task
-            can be opened until this clears.
+            can be opened until an admin clears it.
           </p>
 
-          <LockClock seconds={s!.lockedSec} />
+          {adminOnly ? (
+            <p className="mt-7 rounded-lg border border-amber-900/50 bg-amber-950/20 px-4 py-3 font-mono text-sm font-bold tracking-wide text-amber-300">
+              🔒 LOCKED — CONTACT ADMIN TO KICK/UNLOCK
+            </p>
+          ) : (
+            <LockClock seconds={s!.lockedSec} />
+          )}
 
           <p className="mt-6 font-mono text-[11px] tracking-[0.2em] text-zinc-600">
             THE THREE HOUR CLOCK KEEPS RUNNING
