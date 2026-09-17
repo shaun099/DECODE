@@ -1,5 +1,5 @@
 'use client';
-import { use, useState } from 'react';
+import { use, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Guard from '@/components/Guard';
 import GameHud from '@/components/GameHud';
@@ -16,6 +16,22 @@ export default function CardPage({ params }: { params: Promise<{ cardId: string 
   const [done, setDone] = useState<{ key: any; nextClue: string | null } | null>(null);
 
   const brief = trpc.game.brief.useQuery({ cardId }, { retry: false });
+
+  // Poll for admin kick — if activeCard is cleared while we're on this card, go to board.
+  // This is faster than Guard's 4s poll and works even when session is set (playing).
+  const kickedState = trpc.game.state.useQuery(undefined, {
+    refetchInterval: 1500,
+    retry: false,
+    select: (d) => ({ activeCard: d.activeCard, lockedMs: d.lockedMs, finished: d.finished, expired: d.expired }),
+  });
+  useEffect(() => {
+    const s = kickedState.data;
+    if (!s || s.finished || s.expired || s.lockedMs > 0) return;
+    // We are on /play/card/[cardId] and server says no active task → we were kicked
+    if (!s.activeCard) {
+      router.replace('/play');
+    }
+  }, [kickedState.data, router]);
 
   const start = trpc.game.start.useMutation({ onSuccess: (d) => setSession(d) });
 

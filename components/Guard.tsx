@@ -42,8 +42,9 @@ export default function Guard({ children }: { children: React.ReactNode }) {
     else if (s.finished && path !== '/result') target = '/result';
     else if (!s.locked && s.activeCard && path !== `/play/card/${s.activeCard}`) {
       target = `/play/card/${s.activeCard}`;
-    } else if (!s.locked && !s.activeCard && path.startsWith('/play/card/')) {
+    } else if (!s.activeCard && path.startsWith('/play/card/')) {
       // Admin kicked the player — active_card cleared, bring them back to board
+      // (no !locked check so it works even if they were locked)
       target = '/play';
     }
   }
