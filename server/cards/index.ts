@@ -12,6 +12,7 @@ import password from '@/games/password/card';
 import maze from '@/games/maze/card';
 import memory from '@/games/memory/card';
 import blindcode from '@/games/blindcode/card';
+import captcha from '@/games/captcha/card';
 import output from '@/games/output/card';
 import speedtyping from '@/games/speedtyping/card';
 

@@ -6,7 +6,7 @@ import { CheckCircle2 } from 'lucide-react';
 
 export interface FlipCardData {
   name: string;
-  hint: string;
+  hint?: string;
   game: string;
 }
 
