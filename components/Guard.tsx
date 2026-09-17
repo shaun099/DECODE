@@ -73,16 +73,21 @@ export default function Guard({ children }: { children: React.ReactNode }) {
   if (s!.locked) {
     return (
       <div className="flex min-h-screen items-center justify-center px-4">
-        <div className="max-w-md border-2 border-red-900 bg-black/60 px-10 py-10 text-center">
-          <p className="text-xl font-black tracking-[0.2em] text-red-400">TERMINAL LOCKED</p>
-          <p className="mt-4 text-sm leading-relaxed text-zinc-400">
-            Attempts exhausted. The task has been reset to its beginning, and no other task
-            can be opened until this clears.
+        <div className="max-w-md rounded-2xl border-2 border-red-500/80 bg-black/80 px-10 py-10 text-center shadow-[0_0_40px_rgba(239,68,68,0.2)] backdrop-blur-md">
+          <p className="font-mono text-xl font-black tracking-[0.2em] text-red-400">TERMINAL LOCKED</p>
+          <p className="mt-4 font-mono text-sm leading-relaxed text-zinc-300">
+            Attempts exhausted. The task has been reset, and access is locked until the timer expires.
           </p>
 
-          <LockClock seconds={s!.lockedSec} />
+          <LockClock
+            seconds={s!.lockedSec}
+            onComplete={() => {
+              setRemount((n) => n + 1);
+              router.replace('/play');
+            }}
+          />
 
-          <p className="mt-6 font-mono text-[11px] tracking-[0.2em] text-zinc-600">
+          <p className="mt-6 font-mono text-[11px] tracking-[0.2em] text-zinc-500">
             THE THREE HOUR CLOCK KEEPS RUNNING
           </p>
         </div>

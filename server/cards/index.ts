@@ -9,10 +9,11 @@ import { DECOYS } from '@/games/decoys/card';
 import spot from '@/games/spot/card';
 import leetcode from '@/games/leveldevil/card';
 import password from '@/games/password/card';
-import captcha from '@/games/captcha/card';
 import maze from '@/games/maze/card';
+import memory from '@/games/memory/card';
 import blindcode from '@/games/blindcode/card';
 import output from '@/games/output/card';
+import speedtyping from '@/games/speedtyping/card';
 
 export type { CardModule };
 
@@ -30,6 +31,8 @@ export const CARDS: CardModule[] = [
   maze,
   blindcode,
   output,
+  speedtyping,
+  memory,
   ...DECOYS,
 ];
 

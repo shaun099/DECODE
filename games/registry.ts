@@ -8,12 +8,13 @@ import SudokuGame from './sudoku/Game';
 import CrosswordGame from './crossword/Game';
 import SpotGame from './spot/Game';
 import PasswordGame from './password/Game';
-import CaptchaGame from './captcha/Game';
 import LevelDevilGame from './leveldevil/Game';
 import BlindcodeGame from './blindcode/Game';
 import MazeGame from './maze/Game';
 import OutputGame from './output/Game';
+import SpeedTypingGame from './speedtyping/Game';
 import DecoyGame from './decoys/Game';
+import MemoryGame from './memory/Game';
 import { DECOY_IDS } from './decoys/ids';
 
 export interface GameProps {
@@ -31,11 +32,12 @@ const MAP: Record<string, ComponentType<GameProps>> = {
   crossword: CrosswordGame,
   spot: SpotGame,
   password: PasswordGame,
-  captcha: CaptchaGame,
   leveldevil: LevelDevilGame,
   blindcode: BlindcodeGame,
   maze: MazeGame,
   output: OutputGame,
+  speedtyping: SpeedTypingGame,
+  memory: MemoryGame,
 };
 
 DECOY_IDS.forEach((id) => { MAP[id] = DecoyGame; });
