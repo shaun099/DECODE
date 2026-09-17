@@ -46,15 +46,7 @@ export default function Story() {
               anything. Ready?
             </p>
             <div className="mt-4 flex gap-3">
-              <button
-                onClick={() => setConfirming(false)}
-                disabled={begin.isPending}
-                className="flex-1 rounded-lg border border-zinc-700 py-3 font-mono text-xs
-                           tracking-widest text-zinc-400 hover:text-zinc-100
-                           disabled:cursor-not-allowed disabled:opacity-40"
-              >
-                NOT YET
-              </button>
+              
               <button
                 onClick={() => begin.mutate()}
                 disabled={begin.isPending}

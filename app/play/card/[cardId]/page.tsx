@@ -138,46 +138,42 @@ export default function CardPage({ params }: { params: Promise<{ cardId: string 
       );
     }
     return (
-      <div className="mx-auto flex min-h-screen max-w-lg flex-col justify-center gap-7 px-6 py-10">
-        <div>
-          <p className="font-mono text-[11px] tracking-[0.28em] text-emerald-500">BRIEFING</p>
-          <h1 className="mt-3 text-4xl font-black text-zinc-100">{b.name}</h1>
-          <p className="mt-2 text-[15px] text-zinc-400">{b.teaser}</p>
+      <Guard>
+        <div className="mx-auto flex min-h-screen max-w-lg flex-col justify-center gap-7 px-6 py-10">
+          <div>
+            <p className="font-mono text-[11px] tracking-[0.28em] text-emerald-500">TASK BRIEFING & INSTRUCTIONS</p>
+            <h1 className="mt-3 text-4xl font-black text-zinc-100">{b.name}</h1>
+            <p className="mt-2 text-[15px] text-zinc-400">{b.teaser}</p>
+          </div>
+
+          <ol className="space-y-3 border-2 border-emerald-900/70 bg-black/50 px-7 py-6">
+            {b.rules.map((r: string, i: number) => (
+              <li key={i} className="flex gap-4 text-[15px] leading-relaxed text-zinc-200">
+                <span className="font-mono text-emerald-400">{String(i + 1).padStart(2, '0')}</span>
+                <span>{r}</span>
+              </li>
+            ))}
+          </ol>
+
+          <p className="border-l-2 border-amber-500 pl-4 text-[13px] leading-relaxed text-amber-300 font-mono">
+            TERMINAL ENGAGED: You have initialized this challenge. You cannot return to the main board until this task is completed.
+          </p>
+
+          <div className="flex gap-3">
+            <button onClick={() => start.mutate({ cardId })} disabled={start.isPending} autoFocus
+              className="flex-1 border-2 border-emerald-600 bg-emerald-500/10 py-4 text-[13px]
+                         font-bold uppercase tracking-[0.2em] text-emerald-300 transition-all
+                         hover:bg-emerald-500 hover:text-black disabled:opacity-35"
+            >
+              {start.isPending ? 'COMMENCING TASK…' : 'BEGIN CHALLENGE'}
+            </button>
+          </div>
+
+          {start.error && (
+            <p className="text-center font-mono text-[13px] text-red-400">{start.error.message}</p>
+          )}
         </div>
-
-        <ol className="space-y-3 border-2 border-emerald-900/70 bg-black/50 px-7 py-6">
-          {b.rules.map((r: string, i: number) => (
-            <li key={i} className="flex gap-4 text-[15px] leading-relaxed text-zinc-200">
-              <span className="font-mono text-emerald-400">{String(i + 1).padStart(2, '0')}</span>
-              <span>{r}</span>
-            </li>
-          ))}
-        </ol>
-
-        <p className="border-l-2 border-red-500 pl-4 text-[13px] leading-relaxed text-red-300">
-          Once you begin you cannot return to the board or open another task until this one
-          is complete.
-        </p>
-
-        <div className="flex gap-3">
-          <button onClick={() => router.replace('/play')}
-            className="flex-1 border-2 border-zinc-800 py-4 text-[12px] font-semibold uppercase
-                       tracking-[0.2em] text-zinc-400 transition-colors hover:border-zinc-600
-                       hover:text-zinc-100">
-            Not yet
-          </button>
-          <button onClick={() => start.mutate({ cardId })} disabled={start.isPending} autoFocus
-            className="flex-1 border-2 border-emerald-600 bg-emerald-500/10 py-4 text-[12px]
-                       font-bold uppercase tracking-[0.2em] text-emerald-300 transition-all
-                       hover:bg-emerald-500 hover:text-black disabled:opacity-35">
-            {start.isPending ? 'Starting…' : 'Begin'}
-          </button>
-        </div>
-
-        {start.error && (
-          <p className="text-center font-mono text-[13px] text-red-400">{start.error.message}</p>
-        )}
-      </div>
+      </Guard>
     );
   }
 
