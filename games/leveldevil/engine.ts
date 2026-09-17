@@ -17,9 +17,10 @@ export const LEVEL_CAP = 3;
 export interface BootOptions {
   onLevelCleared: (levelIndex: number, deaths: number) => void;
   onAllCleared: (deaths: number) => void;
+  onReset?: (deaths: number) => void;
 }
 
-let OPTS: BootOptions = { onLevelCleared: () => {}, onAllCleared: () => {} };
+let OPTS: BootOptions = { onLevelCleared: () => {}, onAllCleared: () => {}, onReset: () => {} };
 
 export function boot(opts: BootOptions): () => void {
   OPTS = opts;
@@ -1803,7 +1804,9 @@ const Game = {
       this.deathT += dt;
       for (const t of this.level.traps) t.update(dt, this);
       if (this.deathT > 0.85) {
-        this.startWipe(() => { this.loadLevel(this.levelIndex); this.state = "play"; });
+        for (const k in DONE) delete DONE[k];
+        try { OPTS.onReset?.(this.deaths); } catch {}
+        this.startWipe(() => { this.loadLevel(0); this.state = "play"; });
         this.state = "respawning";
       }
     } else if (this.state === "win") {

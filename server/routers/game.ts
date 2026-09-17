@@ -147,15 +147,34 @@ export const gameRouter = router({
       if (timeLeft(t) <= 0 && t.started_at)
         throw new TRPCError({ code: 'FORBIDDEN', message: 'time is up' });
       if (lockedFor(t) > 0) throw new TRPCError({ code: 'FORBIDDEN', message: 'locked' });
-      if (t.active_card !== input.cardId)
-        throw new TRPCError({ code: 'FORBIDDEN', message: 'not the committed task' });
 
       const card = byId(input.cardId);
       if (!card) throw new TRPCError({ code: 'NOT_FOUND' });
 
       const { data: row } = await db.from('progress')
         .select('*').eq('team_id', ctx.teamId).eq('card_id', card.id).single();
-      if (!row || row.solved_at) throw new TRPCError({ code: 'BAD_REQUEST' });
+
+      // Idempotent success for already-solved tasks (prevents "not the committed task"
+      // when the engine fires both onLevelCleared for the final room and onAllCleared).
+      if (row?.solved_at) {
+        return {
+          correct: true,
+          done: true,
+          locked: false,
+          lockMs: 0,
+          attemptsLeft: Math.max(0, card.maxWrong - (row.attempts ?? 0)),
+          lastAnswer: null,
+          lastPick: null,
+          lastResult: null,
+          key: card.real && card.key ? card.key : null,
+          nextClue: card.nextClue ?? null,
+          view: null,
+        };
+      }
+      if (!row) throw new TRPCError({ code: 'BAD_REQUEST' });
+
+      if (t.active_card !== input.cardId)
+        throw new TRPCError({ code: 'FORBIDDEN', message: 'not the committed task' });
 
       
       const res = await card.attempt(row.state, input.payload);
