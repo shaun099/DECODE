@@ -28,7 +28,6 @@ export const CARDS: CardModule[] = [
   spot,
   leetcode,
   password,
-  captcha,
   maze,
   blindcode,
   output,
