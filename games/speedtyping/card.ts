@@ -9,7 +9,7 @@ interface State {
 const card: CardModule = {
   id: 'speedtyping',
   real: false,
-  name: 'Speed Typing',
+  name: 'The KeyBoard Race',
   teaser: 'Type fast. 15–30 seconds per sentence depending on complexity. Four levels.',
   rules: [
     'Type the sentence exactly — case and punctuation matter.',
