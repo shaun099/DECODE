@@ -10,18 +10,32 @@ export default function Home() {
   const join = trpc.team.join.useMutation({ onSuccess: () => router.push('/story') });
 
   return (
-    <div className="flex h-screen flex-col items-center justify-center gap-8 px-4">
-      <h1 className="font-mono text-6xl font-bold tracking-[0.3em] text-green-300">DECODE</h1>
-      <div className="w-full max-w-sm space-y-3">
-        <input value={name} onChange={(e) => setName(e.target.value)} placeholder="TEAM NAME"
-          className="w-full rounded-lg border-2 border-zinc-700 bg-zinc-950 px-4 py-3.5 font-mono
-                     text-sm tracking-widest text-zinc-100 outline-none focus:border-green-500" />
-        <input value={pw} onChange={(e) => setPw(e.target.value)} type="password" placeholder="ROOM PASSWORD"
-          className="w-full rounded-lg border-2 border-zinc-700 bg-zinc-950 px-4 py-3.5 font-mono
-                     text-sm tracking-widest text-zinc-100 outline-none focus:border-green-500" />
-        <button onClick={() => join.mutate({ name, password: pw })} disabled={join.isPending}
-          className="w-full rounded-lg border-2 border-green-500/70 bg-zinc-950 py-3.5 font-mono
-                     text-sm font-bold tracking-[0.2em] text-green-300 hover:bg-green-500 hover:text-black">
+    <div
+      className="relative flex h-screen items-end justify-center gap-8 px-4 bg-cover bg-center bg-no-repeat"
+      style={{ backgroundImage: "url('/bg.png')" }}
+    >
+      <div className="w-full max-w-sm space-y-3  h-1/4 relative z-10">
+        <input
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="TEAM NAME"
+          className="w-full rounded-lg border-2 border-zinc-700 bg-zinc-950/80 backdrop-blur-sm px-4 py-3.5 font-mono
+                     text-sm tracking-widest text-zinc-100 outline-none focus:border-green-500"
+        />
+        <input
+          value={pw}
+          onChange={(e) => setPw(e.target.value)}
+          type="password"
+          placeholder="ROOM PASSWORD"
+          className="w-full rounded-lg border-2 border-zinc-700 bg-zinc-950/80 backdrop-blur-sm px-4 py-3.5 font-mono
+                     text-sm tracking-widest text-zinc-100 outline-none focus:border-green-500"
+        />
+        <button
+          onClick={() => join.mutate({ name, password: pw })}
+          disabled={join.isPending}
+          className="w-full rounded-lg border-2 border-green-500/70 bg-zinc-950/80 backdrop-blur-sm py-3.5 font-mono
+                     text-sm font-bold tracking-[0.2em] text-green-300 hover:bg-green-500 hover:text-black transition-colors"
+        >
           {join.isPending ? 'CHECKING…' : 'ENTER'}
         </button>
         {join.error && (
