@@ -89,7 +89,22 @@ export default function LevelDevilGame({ hud, view, send }: GameProps) {
   const total: number = view?.total ?? 3;
 
   const started = useRef(false);
+  const wonRef = useRef(false);
   const [deaths, setDeaths] = useState(0);
+
+  // Wrap send so a duplicate win after the task is already solved does not
+  // surface as "not the committed task" (unhandledRejection in the browser).
+  // The engine fires onLevelCleared for the final room and then onAllCleared
+  // ~0.8s later. Both would complete the task; the server now handles the
+  // second idempotently, but we still swallow rejections so the browser does
+  // not log an unhandled error.
+  const safeSend = (payload: any) => {
+    if (wonRef.current && payload?.all) return Promise.resolve();
+    if (payload?.all) wonRef.current = true;
+    const p = Promise.resolve(send(payload));
+    p.catch(() => {});
+    return p;
+  };
 
   useEffect(() => {
     if (started.current) return;
@@ -100,11 +115,16 @@ export default function LevelDevilGame({ hud, view, send }: GameProps) {
       teardown = boot({
         onLevelCleared: (levelIndex, d) => {
           setDeaths(d);
-          send({ level: levelIndex, deaths: d });
+          safeSend({ level: levelIndex, deaths: d });
         },
         onAllCleared: (d) => {
           setDeaths(d);
-          send({ all: true, deaths: d });
+          safeSend({ all: true, deaths: d });
+        },
+        onReset: (d) => {
+          setDeaths(d);
+          // Any death resets server progress to room 1.
+          safeSend({ reset: true, deaths: d });
         },
       });
     });
