@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CSE Maze — Key Fragment</title>
+    <script type="module" crossorigin src="/assets/index-D3u9EsJa.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-D6N-spN7.css">
+  </head>
+  <body>
+    <div id="app">
+      <header class="topbar">
+        <div>
+          <div class="brand">CSE MAZE</div>
+          <div class="subtitle">TECHNICAL KEY FRAGMENT CHALLENGE</div>
+        </div>
+        <button id="startBtn" class="start-btn">START GAME</button>
+      </header>
+
+      <section class="stats">
+        <div class="stat"><span>LEVEL</span><strong id="levelLabel">1 / 2</strong></div>
+        <div class="stat"><span>DOORS</span><strong id="doorsLabel">0 / 5</strong></div>
+        <div class="stat"><span>LIVES</span><strong id="livesLabel">♥ ♥ ♥</strong></div>
+        <div class="stat timer"><span>TIME LEFT</span><strong id="timerLabel">05:00</strong></div>
+      </section>
+
+      <main class="game-layout">
+        <section class="maze-card">
+          <div class="card-heading">
+            <div>
+              <h1 id="mazeTitle">LEVEL 1 — CSE BASICS</h1>
+              <p>Reach the exit. Locked doors are obstacles: answer the CSE question to open them.</p>
+            </div>
+            <div class="controls-hint">MOVE: ↑ ↓ ← → &nbsp; OR &nbsp; W A S D</div>
+          </div>
+          <div id="maze" aria-label="CSE maze"></div>
+          <div class="legend">
+            <span><i class="legend-dot player-dot"></i>YOU</span>
+            <span><i class="legend-dot door-dot"></i>LOCKED DOOR</span>
+            <span><i class="legend-dot open-dot"></i>OPEN DOOR</span>
+            <span><i class="legend-dot exit-dot"></i>EXIT</span>
+          </div>
+        </section>
+
+        <aside class="side-panel">
+          <section class="question-card" id="questionCard">
+            <div class="eyebrow">DOOR CHALLENGE</div>
+            <h2 id="questionTitle">Start the game</h2>
+            <p id="questionText">Press START GAME, then use only the arrow keys or WASD to move through the maze.</p>
+            <div id="answers" class="answers"></div>
+            <button id="submitBtn" class="submit-btn" disabled>SUBMIT ANSWER</button>
+            <div id="feedback" class="feedback"></div>
+          </section>
+
+          <section class="mission-card">
+            <div class="eyebrow">MISSION</div>
+            <h2>Find the key fragment</h2>
+            <p>Level 1 has 5 locked doors. Level 2 adds 5 more, for 10 total obstacles.</p>
+            <div class="progress-track"><div id="progressBar" class="progress-bar"></div></div>
+            <div class="progress-text" id="progressText">0% complete</div>
+          </section>
+
+          <section class="rules-card">
+            <div class="eyebrow">RULES</div>
+            <ul>
+              <li>Overall time limit: <b>5 minutes</b>.</li>
+              <li>Level 1: simple CSE questions.</li>
+              <li>Level 2: slightly harder CSE questions.</li>
+              <li>Wrong answers cost one life.</li>
+              <li>Reach the glowing exit to clear a level.</li>
+            </ul>
+          </section>
+        </aside>
+      </main>
+
+      <div id="modal" class="modal hidden">
+        <div class="modal-box">
+          <div id="modalIcon" class="modal-icon">🔑</div>
+          <div class="eyebrow" id="modalEyebrow">KEY FRAGMENT</div>
+          <h2 id="modalTitle">Key Fragment Acquired!</h2>
+          <p id="modalText">You cleared the maze and recovered part of the key.</p>
+          <button id="modalBtn" class="start-btn">CONTINUE</button>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
