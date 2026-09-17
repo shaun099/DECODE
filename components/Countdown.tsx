@@ -32,12 +32,13 @@ export default function Countdown() {
 
       const left = Math.max(0, deadline.current - Date.now());
       const s = Math.floor(left / 1000);
-      const text = `${pad(Math.floor(s / 3600))}:${pad(Math.floor((s % 3600) / 60))}:${pad(s % 60)}`;
+      const hours = Math.floor(s / 3600);
+      const text = `${hours}:${pad(Math.floor((s % 3600) / 60))}:${pad(s % 60)}`;
 
       if (text === shown) return;           // only touch the DOM when a digit changes
       shown = text;
       el.current.textContent = text;
-      el.current.style.color = left < 15 * 60 * 1000 ? '#f87171' : '#6ee7b7';
+      el.current.style.color = left < 15 * 60 * 1000 ? '#f87171' : '#a3e635';
     };
 
     raf = requestAnimationFrame(paint);
@@ -47,7 +48,7 @@ export default function Countdown() {
   return (
     <span
       ref={el}
-      className="font-mono text-lg font-bold text-emerald-300"
+      className="font-mono text-base sm:text-lg font-bold tracking-widest text-[#a3e635] drop-shadow-[0_0_8px_rgba(163,230,53,0.6)]"
       style={{ fontVariantNumeric: 'tabular-nums' }}
     >
       --:--:--
