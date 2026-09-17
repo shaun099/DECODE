@@ -1,5 +1,11 @@
 export const LEVEL_COUNT = 4;
-export const TIME_LIMIT_MS = 27_000;
+export const TIME_LIMIT_MS = 27_000; // fallback/default
+export const TIME_LIMITS_MS: number[] = [
+  18_000, // Level 1 — easy, short natural sentence
+  22_000, // Level 2 — code with symbols, medium
+  27_000, // Level 3 — longer prose, hard
+  32_000, // Level 4 — code-heavy, hardest (most time but still tight)
+];
 
 export const SENTENCES: string[] = [
   'The quick brown fox jumps over the lazy dog.',
@@ -7,6 +13,10 @@ export const SENTENCES: string[] = [
   'Failure is not fatal; it is the courage to continue that counts.',
   'while(true){ try{ await fetch(url); } catch(e){ retry(e); } }',
 ];
+
+export function getTimeLimit(level: number): number {
+  return TIME_LIMITS_MS[level] ?? TIME_LIMIT_MS;
+}
 
 export function calcWpm(typedChars: number, elapsedMs: number): number {
   if (elapsedMs <= 0) return 0;

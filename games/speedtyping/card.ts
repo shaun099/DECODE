@@ -10,10 +10,10 @@ const card: CardModule = {
   id: 'speedtyping',
   real: false,
   name: 'Speed Typing',
-  teaser: 'Type fast. 27 seconds per sentence. Four levels.',
+  teaser: 'Type fast. 18–32 seconds per sentence depending on complexity. Four levels.',
   rules: [
     'Type the sentence exactly — case and punctuation matter.',
-    'You have 27 seconds per level; the clock starts on first keystroke.',
+    'Each level has its own timer (L1 18s → L2 22s → L3 27s → L4 32s); clock starts on first keystroke.',
     'Finish all four levels in order to pass.',
     'Copy-paste is blocked. You must type.',
     'You cannot leave once you begin.',
