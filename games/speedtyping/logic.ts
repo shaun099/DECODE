@@ -1,10 +1,10 @@
 export const LEVEL_COUNT = 4;
 export const TIME_LIMIT_MS = 27_000; // fallback/default
 export const TIME_LIMITS_MS: number[] = [
-  25_000, // Level 1 — easy, short natural sentence
-  35_000, // Level 2 — code with symbols, medium
-  25_000, // Level 3 — longer prose, now 25s as requested
-  40_000, // Level 4 — code-heavy, hardest
+  15_000, // Level 1 — 15s as requested
+  30_000, // Level 2 — 30s as requested
+  15_000, // Level 3 — 15s as requested
+  30_000, // Level 4 — 30s as requested
 ];
 
 export const SENTENCES: string[] = [
