@@ -17,19 +17,24 @@ export default function CardPage({ params }: { params: Promise<{ cardId: string 
 
   const brief = trpc.game.brief.useQuery({ cardId }, { retry: false });
 
-  // Poll for admin kick — if activeCard is cleared while we're on this card, go to board.
-  // This is faster than Guard's 4s poll and works even when session is set (playing).
+  // Poll for admin kick — if activeCard is cleared while we're on this card, go to board (/play).
+  // User explicitly wants /card (board) not /card/game_name, so we go to /play which is the board.
   const kickedState = trpc.game.state.useQuery(undefined, {
-    refetchInterval: 1500,
+    refetchInterval: 800,
     retry: false,
     select: (d) => ({ activeCard: d.activeCard, lockedMs: d.lockedMs, finished: d.finished, expired: d.expired }),
   });
   useEffect(() => {
     const s = kickedState.data;
-    if (!s || s.finished || s.expired || s.lockedMs > 0) return;
+    if (!s || s.finished || s.expired) return;
     // We are on /play/card/[cardId] and server says no active task → we were kicked
+    // Use hard replace to ensure we land on board (/play) not game's title/briefing
     if (!s.activeCard) {
       router.replace('/play');
+      // Fallback hard navigation in case Next router is stuck in game
+      setTimeout(() => {
+        if (window.location.pathname.startsWith('/play/card/')) window.location.replace('/play');
+      }, 400);
     }
   }, [kickedState.data, router]);
 
