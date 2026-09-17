@@ -20,7 +20,7 @@ export default function SpeedTypingGame({ hud, view, send }: GameProps) {
         <div className="flex flex-1 flex-col items-center justify-center rounded-xl border-2 border-emerald-600/50 bg-emerald-950/20 p-10 text-center">
           <p className="font-mono text-xs tracking-[0.2em] text-emerald-400">ALL LEVELS CLEARED</p>
           <h2 className="mt-3 text-3xl font-black text-emerald-100">Speed Demon</h2>
-          <p className="mt-2 text-sm text-zinc-400">All four sentences typed in under 15 seconds each.</p>
+          <p className="mt-2 text-sm text-zinc-400">All four sentences typed in under 27 seconds each.</p>
         </div>
       </div>
     );
@@ -60,7 +60,7 @@ export default function SpeedTypingGame({ hud, view, send }: GameProps) {
     setTimeout(() => inputRef.current?.focus(), 50);
   }, [currentLevel, target, cleared]);
 
-  // Start timer on first keystroke — more forgiving, but still 15s limit
+  // Start timer on first keystroke — more forgiving, but still 27s limit
   // If you want hard-mode from mount, move this to the reset effect above.
   const ensureTimer = () => {
     if (timerRef.current || hasFailedRef.current || succeeded || busy) return;
@@ -229,7 +229,7 @@ export default function SpeedTypingGame({ hud, view, send }: GameProps) {
       <div className="flex min-h-0 flex-1 flex-col gap-5 overflow-hidden rounded-xl border-2 border-emerald-900/70 bg-black/60 p-6 shadow-lg shadow-black/30">
         <div className="shrink-0">
           <p className="font-mono text-[11px] tracking-[0.2em] text-emerald-500">
-            TYPE EXACTLY — CASE & PUNCTUATION MATTER • 15 SECONDS
+            TYPE EXACTLY — CASE & PUNCTUATION MATTER • 27 SECONDS
           </p>
           <p className="mt-1 text-sm text-zinc-500">
             {currentLevel === 0 && 'Warm up. Simple sentence.'}
@@ -308,7 +308,7 @@ export default function SpeedTypingGame({ hud, view, send }: GameProps) {
         </div>
 
         <p className="shrink-0 text-center font-mono text-[11px] leading-relaxed tracking-wide text-zinc-600">
-          Tip: 15s is tight — aim for ~55 WPM. Hard but not brutal. Punctuation must match exactly.
+          Tip: 27s is generous but still tight — aim for ~30 WPM. Punctuation must match exactly.
         </p>
       </div>
     </div>

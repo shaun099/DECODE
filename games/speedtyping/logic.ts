@@ -1,5 +1,5 @@
 export const LEVEL_COUNT = 4;
-export const TIME_LIMIT_MS = 15_000;
+export const TIME_LIMIT_MS = 27_000;
 
 export const SENTENCES: string[] = [
   'The quick brown fox jumps over the lazy dog.',
